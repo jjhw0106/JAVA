@@ -101,11 +101,8 @@ public class BookApp {
 
 		System.out.println("책번호\t가격\t할인가격\t재고\t제목");
 		for (Book book : service.getAllBookList()) {
-			System.out.println(book.getNo()
-					+ "\t" + book.getPrice()
-					+ "\t" + book.getDiscountPrice()
-					+ "\t" + book.getStock()
-					+ "\t" + book.getTitle());
+			System.out.println(book.getNo() + "\t" + book.getPrice() + "\t" + book.getDiscountPrice() + "\t"
+					+ book.getStock() + "\t" + book.getTitle());
 		}
 	}
 
@@ -121,8 +118,7 @@ public class BookApp {
 	}
 
 	/**
-	 * 회원가입하기
-	 * 아이디 중복체크 실패시 전부 다시 입력해야함->서비스에 user받아오기 없음
+	 * 회원가입하기 아이디 중복체크 실패시 전부 다시 입력해야함->서비스에 user받아오기 없음
 	 */
 	private void register() {
 		System.out.println("회원가입");
@@ -155,7 +151,6 @@ public class BookApp {
 	 * @throws IOException
 	 */
 	private void searchBook() {
-//		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		while (true) {
 			System.out.println("-----------------------------------------------------------------------");
 			System.out.println("1.제목검색  2.카테고리검색  3.가격검색  0.종료");
@@ -168,20 +163,17 @@ public class BookApp {
 
 			if (searchMenuNo == 1) {
 				System.out.print("책 제목: ");
-//				String title = br.readLine();
 				String title = sc.nextLine();
 				for (Book book : service.searchBooksByTitle(title)) {
-					System.out.println(book.getNo() + ". [" + book.getTitle() + "]"
-							+ "  작가: " + book.getWriter()
-							+ "  가격: " + book.getPrice()
-							+ "  수량: " + book.getStock());
+					System.out.println(book.getNo() + ". [" + book.getTitle() + "]" + "  작가: " + book.getWriter()
+							+ "  가격: " + book.getPrice() + "  수량: " + book.getStock());
 				}
-//				br.close();					// Q. 꼭 해줘야 하는지? => System.in이 Scanner와 공유되기 때문에 클로즈하면 noSuchElement 에러 뜸
 			} else if (searchMenuNo == 2) {
 				System.out.print("카테고리: ");
 				String category = sc.nextLine();
 				for (Book book : service.searchBooksByCategory(category)) {
-					System.out.println(book.getNo() + ". [" + book.getTitle() + "]"
+					System.out.println(book.getNo()
+							+ ". [" + book.getTitle() + "]"
 							+ "  작가: " + book.getWriter()
 							+ "  가격: " + book.getPrice()
 							+ "  수량: " + book.getStock());
@@ -193,8 +185,11 @@ public class BookApp {
 				int maxPrice = sc.nextInt();
 
 				for (Book book : service.searchBooksByPrice(minPrice, maxPrice)) {
-					System.out.println(book.getNo() + "\t" + book.getPrice() + "\t" + book.getDiscountPrice() +
-							"\t" + book.getStock() + "\t" + book.getTitle());
+					System.out.println(book.getNo()
+							+ "\t" + book.getPrice()
+							+ "\t" + book.getDiscountPrice()
+							+ "\t" + book.getStock()
+							+ "\t" + book.getTitle());
 				}
 
 			} else if (searchMenuNo == 0) {
@@ -213,7 +208,7 @@ public class BookApp {
 	private void orderBook() {
 		System.out.println("[구매]");
 		System.out.print("구매할 책의 번호: ");
-		int bookNo = sc.nextInt();		// =>service.findBook으로 바꿀것
+		int bookNo = sc.nextInt(); // =>service.findBook으로 바꿀것
 		System.out.print("구매 권수: ");
 		int amount = sc.nextInt();
 		service.orderBook(bookNo, amount);

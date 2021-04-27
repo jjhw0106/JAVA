@@ -1,0 +1,269 @@
+오라클 id: eungsulee@naver.com
+        pw: Zxcv1234
+
+Oracle 설치주소: oracle.com/database/technologies/xe-prior-releases.html
+Oracle Developer 설치주소: https://www.oracle.com/database/technologies/appdev/sqldeveloper-landing.html
+
+
+오라클이 제공하는 샘플계정(hr) 활성화
+ - conn system/zxcv1234
+ - alter user hr account unlock;		->hr 계정 활성화
+ - alter user hr identified by zxcv1234;	->hr 계정 비밀번호를 zxcv1234로 변경
+
+hr 계정 접속 테스트
+ - conn hr/zxcv1234
+ - connected가 출력되면 정상
+
+hr계정의 테이블 조회하기
+ - select * from tabs;
+
+
+**=======================데이터베이스의 특징==================================
+실시간 접근을 지원
+다수의 사용자 혹은 프로그램이 동시에 데이터 이용 가능
+데이터에 대한 접근 용이
+레코드의 주소나 위치가 아닌 내용으로 데이터를 탐색 가능
+항상 최신 데이터 유지
+
+
+한글 : 3byte가 한글자
+
+내가 사용하는 db
+DBMS는 Oracle Express Edition 11g
+DB는 오라클 DB사용
+
+SQL편집기 (SQL 입력/ 전송프로그램)
+SQL Command Line
+SQL Developer
+
+편집기는 전송만 하고 오라클 내에서 연산 이루어진다.
+
+조회할 때 * 쓰지말것, 키워드 하나당 한줄 바꿀것
+
+SQl
+찾고싶은 것만 적고 어떻게 찾는지는 몰라도 됨 = 선언적 프로그래밍
+invalid identifier : 컬럼이름 잘못되었을 떄 뜨는 오류, 자주 생긴다.
+
+오라클의 인덱스는 1부터 시작한다.
+
+**=======================KeyWord============================================
+select, from, where
+and, or, between A and B(경계값 포함) // 경계값 포함여부가 헷갈릴 수 있어 부등호를 사용한 and연산을 많이 씀 
+가능한 or 연산자는 쓰지 않으며, 조건이 소수 몇개인 경우(ex. 아이디가 101, 102)
+where manager_id in(101, 102);와 같이 쓴다.
+=>or는 a이면서 b인경우의 조건을 찾을 때만 쓴다.
+
+and와 or를 같이 사용할 경우는 and( a or b)로 괄호를 꼭 써줘야 한다. (안쓰면 다른값)	--
+
+Like => 쿼리의 성능을 떨어트린다. /'='연산만 가능하기 때문에 in과 함께 쓰진 못한다.
+
+ex) 책제목 like '%자바%' 제목에 "자바"가 포함되어 있는 모든책
+    % : 0개이상의 모든 문자 
+
+is null
+is not null
+
+dual => 1행1열짜리 테이블 (오라클에서 기본 제공), 간단한 연산 결과 확인 시 사용
+ex) select 100*3 from dual; (만약에 employees였으면 employees의 행의 갯수만큼 출력이된다)
+
+
+**문법 순서
+select
+from
+[where 조건식]
+[group by 컬럼명 혹은 표현식]
+[having 조건식]
+[order by 컬럼명 혹은 표현식]
+
+
+ERD(Entity Relational Diagram)
+데이터간의 관계를 나타내는 그래프
+
+
+
+**=======================오라클 내장함수=======================================================
+
+ㅇ 단일행 함수
+  - 조회된 행마다 하나의 결과를 반환
+  - 중첩해서 사용가능
+
+ㅇ 다중행 함수
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--0426 SQL 코드 
+
+--테이블의 모든 행, 모든 컬럼 조회하기
+--SELECT * FROM DEPARTMENTS;
+
+SELECT * FROM JOBS;
+select employee_id,manager_id ,first_name
+from employees;
+
+
+--조회결과에 중복된 값이 있을 때 중복된 행을 제거하고 조회하기
+-- enokyees 에 등록된 사원들이 종사하는 직종의 아이디를 조회하기
+select distinct job_id  --distinct뒤에 선언된 attribute가 모두 똑같은 값을 중복없이선택
+from employees;
+
+--jobs_history 테이블을 조회해서 직종이 변경된 적이 있는 사원의 아이디를 조회하기
+select distinct employee_id
+from job_history;
+
+-- 연결 연산자를 이용해서 두 개 이상의 컬럼값을 붙여서 조회하기
+-- 오라클에서는 문자열 홑따옴표로 입력
+select employee_id, first_name, last_name, first_name||' '|| last_name
+from employees;
+
+-- 조회 결과에 별칭 붙여 조회하기
+select employee_id, first_name || ' ' || last_name as full_name
+from employees;
+
+--as 생략 가능, 쌍따옴표로 띄어쓰기 쓸 수는 있으나 절대 사용 안함
+select employee_id, first_name || ' ' || last_name "full name"
+from employees;
+
+select employee_id id, first_name || ' ' || last_name name
+from employees;
+
+-- 사칙연산자 사용하기
+-- employees 테이블에서 사원아이디, 이름, 주급, 월급 조회하기
+select employee_id, first_name, salary, salary*4 as salary_of_month
+from employees;
+
+-- jobs 테이블에서 직종아이디, 최소급여, 최대급여, 최소급여와 최대급여의 차이를 조회하기
+select job_id, min_salary, max_salary, max_salary-min_salary as salary_gap
+from jobs;
+
+select employee_id, first_name
+from employees
+where employee_id = 100;
+
+--이름이 steven인 사원의 사원아이디, 이름, 직종아이디, 급여 조회
+select employee_id,first_name, job_id, salary
+from employees
+where first_name = 'Steven';    --값은 대소문자가 다르면 안된다.
+
+--급여가 3000이하인 사원의 사원아이디, 이름, 직종아이디, 급여를 조회하기
+select employee_id, first_name, job_id, salary
+from employees
+where salary<=2500;
+
+--조회결과를 이름에 대한 오름차순으로 정렬하기
+select first_name, salary
+from employees
+where salary >= 10000
+order by salary asc;
+
+
+--급여 내림차순으로 정렬하되,
+--급여가 동일한 경우 이름순으로 오름차순 정렬하기
+select first_name, salary
+from employees
+where salary >= 10000
+order by salary desc, first_name asc;  --,순으로 조건 적용
+
+
+==
+select employee_id, first_name, salary
+from employees
+where manager_id in (101, 102); --or는 잘 쓰지 않는다.
+    
+select* 
+from employees
+where salary <1000 or salary >10000; -- 이런식으로 찾을 값은 별로 존재 x
+
+--소속부서 아이디가 30번이거나 60번이면서 급여를 5000이상 받는 사원의 아이디
+--이름, 급여, 소속부서 아이디를 조회하기
+
+select employee_id, first_name, salary, department_id
+from employees
+where department_id in ( 30, 60) 
+and salary>=5000;
+
+
+
+============0427
+
+select employee_id, first_name, salary
+from employees
+where manager_id in (101, 102); --or.
+    
+select* 
+from employees
+where salary <1000 or salary >10000; -- 이런식으로 찾을 값은 별로 존재 x
+
+--소속부서 아이디가 30번이거나 60번이면서 급여를 5000이상 받는 사원의 아이디
+--이름, 급여, 소속부서 아이디를 조회하기
+
+select employee_id, first_name, salary, department_id
+from employees
+where department_id in ( 30, 60) 
+and salary>=5000;
+
+--or와 and를 괄호 없이 적었을 경우
+select employee_id, first_name, salary, department_id
+from employees
+where department_id = 30 or department_id = 60 
+and salary>=5000;
+
+
+-- is null, is not null을 이용해서 컬럼의 값이 null인 것과 null이 아닌 것을 구분해서 조회하기
+select department_id, department_name, manager_id 
+from departments
+where manager_id is null; -- where manager_id = null ->null은 값 자체가 없기 때문에 이런 연산이 불가하다.
+
+--employees테이블에 등록된 사원들 중에서 커미션을 받는 사원의 아이디, 이름, 급여,커미션 조회하기
+select employee_id, first_name, salary, commission_pct
+from employees
+where commission_pct is not null;
+        
+        
+--employees테이블에 등록된 사원들 중에서 커미션을 받으며
+--급여가 10000이상인 사원의 아이디, 이름, 급여,커미션 조회하기
+select employee_id, first_name, salary, commission_pct
+from employees
+where commission_pct is not null
+and salary>=10000;
+
+
+-- 커미션 오름차순으로 정렬
+select employee_id, first_name, salary, commission_pct
+from employees 
+where commission_pct is not null
+and salary>=10000
+order by commission_pct asc;
+
+
+-- employee테이블에서 사원번호가 110번이상 120번 이하인 사원의 사원아이디, 이름 조회
+select employee_id, first_name
+from employees
+where employee_id between 110 and 120; --경계값 포함
+
+-- employees 테이블에서 직종 아이디에 clerk를 포함하고 있는 사원의 아이디, 이름, 직종아이디 조회
+select employee_id, first_name, job_id
+from employees
+where job_id like '%CLERK'; --문자열은 대소문자 맞출것
+
+--Employees 테이블에서 대문자 'S'를 이름에 포함하고 있는 모든 사원의 이름을 조회하기
+select first_name
+from employees
+where first_name like '%S%';
+
+--employees 테이블에 등록된 사원들 중에서 소속부서 아이디가 30, 50, 60, 80 이 아닌 사원의 
+--아이디, 이름, 부서아이디를 조회하기
+select employee_id, first_name, department_id
+from employees
+where department_id not in (30,50,60,80)
+order by department_id asc;

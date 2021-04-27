@@ -1,0 +1,190 @@
+1. 도서목록
+	- BookRepository
+		loadData() 구현
+			BufferedReader, FileReader를 사용해서 src/books.csv파일 읽어오기
+			한 줄씩 분석해서 Book객체에 저장, Book객체를 db가 참조하는 ArrayList에 저장
+		getAllBooks() 구현
+			모든 책정보를 반환
+	- BookStoreService
+		getAllBookList() 구현
+			BookRepository객체의 getAllBooks() 메소드를 실행해서 모든 책 정보 반환
+	- BookApp
+		displayAllBooks() 구현
+			BookStoreService객체의 getAllBookList() 메소드를 실행해서 모든 책정보 획득
+			모든 책정보 화면에 출력
+			(책번호, 가격, 할인가격, 재고, 제목만 출력)
+2. 로그인
+	- UserRepository
+		loadData() 구현
+			BufferedReader, FileReader를 사용해서 src/users.csv파일 읽어오기
+			한 줄씩 분석해서 User객체에 저장, User객체를 db가 참조하는 ArrayList에 저장
+		getUserById(String userId) 구현
+			전달받은 userId와 일치하는 아이디를 가진 사용자를 찾아서 반환한다.
+			일치하는 사용자가 없으면 null을 반환한다.
+	- BookStoreService
+		login(String id, String password) 구현
+			전달받은 아이디에 해당하는 사용자정보를 UserRepository객체의 getUserById(아이디)메소드를 이용해서 획득하기
+			사용자정보가 존재하지 않으면 UserException 발생시키기 - 아이디 혹은 비밀번호가 일치하지 않습니다.
+			비밀번호가 일치하지 않으면 UserException 발생시키기 - 아이디 혹은 비밀번호가 일치하지 않습니다.
+			획득한 사용자정보를 BookStoreService의 loginedUser에 저장한다.
+		isLogined() 구현
+			BookStoreService의 loginedUser가 null이면 false, null아니면 true를 반환한다.
+	- BookApp
+		login() 구현
+'			아이디, 비밀번호를 입력받는다.
+			BookStoreService객체의 login(아이디, 비밀번호)를 실행해서 로그인인증을 수행한다.
+			* 로그인 인증이 통과되면 메뉴가 변경된다.
+
+3. 회원가입
+	- UserRepository
+		insertUser(User user) 구현
+			전달받은 사용자정보를 db가 참조하는 ArrayList에 저장한다.
+	- BookStoreSerive
+		addNewUser(User user) 구현
+			전달받은 사용자자 아이디로 UserRepository의 getUserById(아이디)로 사용자 정보를 획득한다.
+			사용자정보가 존재하면, UserException 발생시키기 - 이미 등록된 아이디입니다.
+			UserRepository객체의 insetUser(사용자정보)를 실행해서 신규 사용자정보를 저장한다.
+	- BookApp
+		register() 구현
+			아이디, 이름, 비밀번호를 입력받는다.
+			User객체를 생성해서 입력값을 저장한다. point와 grade는 각각 0, 일반으로 저장한다.
+			BookStoreService의 addNewUser(사용자정보)를 실행해서 회원가입을 수행한다.
+
+0. 종료
+	- UserRepository, BookRepository, OrderRepository
+		saveData() 구현
+			PrintWriter를 사용해서 db가 참조하는 ArrayList객체의 값을 csv파일로 저장한다.
+	- BookStoreService
+		restore() 구현
+			UserRepository, BookRepository, OrderRepository객체의 saveData() 메소드 각각 실행
+
+2. 검색
+	- BookStoreService
+		searchBooksByTitle(String title) 구현
+			전달받은 제목을 포함하는 책정보를 저장할 새로운 ArrayList객체 생성
+			BookRepository객체의 getAllBooks()를 실행해서 모든 책 정보 획득
+			책정보들 중에서 전달받은 제목을 포함하는 책들만 새로 생성한 ArrayList에 추가
+			검색된 책정보가 포함된 ArrayList 반환	
+		searchBooksByCategory(String category) 구현
+			전달받은 카테고리와 일치하는 책정보를 저장할 새로운 ArrayList객체 생성
+			BookRepository객체의 getAllBooks()를 실행해서 모든 책 정보 획득
+			책정보들 중에서 전달받은 카테고리와 일치하는 책들만 새로 생성한 ArrayList에 추가
+			검색된 책정보가 포함된 ArrayList 반환	
+		searchBooksByPrice(int minPrice, int maxPrice) 구현
+			전달받은 최소가격과 최대가격 범위에 해당하는 책정보를 저장할 새로운 ArrayList객체 생성
+			BookRepository객체의 getAllBooks()를 실행해서 모든 책 정보 획득
+			책정보들 중에서 전달받은 최소가격과 최대가격 범위에 해당하는 책들만 새로 생성한 ArrayList에 추가
+			검색된 책정보가 포함된 ArrayList 반환	
+	- BookApp
+		searchBook() 구현
+			제목검색
+				제목을 입력받는다. 
+				BookStoreService의 searchBooksByTitle(제목)을 실행해서 검색결과를 획득한다.		
+				검색결과를 화면에 표시한다.
+				(책번호, 가격, 할인가격, 재고, 제목만 출력)
+			카테고리검색
+				카테고리를 입력받는다. 
+				BookStoreService의 searchBooksByCategory(카테고리)을 실행해서 검색결과를 획득한다.		
+				검색결과를 화면에 표시한다.
+				(책번호, 카테고리, 가격, 할인가격, 재고, 제목만 출력)	
+			가격검색
+				최소가격, 최대가격을 입력받는다. 
+				BookStoreService의 searchBooksByPrice(최소가격, 최대가격)을 실행해서 검색결과를 획득한다.		
+				검색결과를 화면에 표시한다.
+				(책번호, 가격, 할인가격, 재고, 제목만 출력)	
+			* 검색결과가 존재하지 않으면 "검색결과가 없습니다"를 출력한다.	
+
+3. 주문
+	- OrderRepository
+		insertOrder(Order order) 구현
+			전달받은 주문정보를 db가 참조하는 ArrayList에 추가한다.
+	- BookRepository
+		getBookByNo(int no) 구현
+			전달받은 책번호에 해당하는 책정보를 반환한다.
+			책정보가 존재하지 않으면 null을 반환한다.
+	- BookStoreService
+		order(int bookNo, int amount) 구현
+			loginedUser가 null이면 로그인정보가 존재하지 않는 것이므로 UserException 발생 - 로그인이 필요한 서비스입니다.
+			BookRepository객체의 getBookByNo(책번호)를 실행해서 책번호에 해당하는 책정보를 조회한다.
+			책정보가 존재하지 않으면 BookException 발생 - 책번호가 올바르지 않습니다.
+			책의 현재 재고량이 주문수량 보다 적으면 BookException 발생 - 재고량이 부족합니다.
+			위의 모든 시험을 통과했다면, 
+			주문정보를 담는 Order객체를 생성하고, 로그인된 사용자의 아이디, 책번호, 주문수량을 담는다.
+			OrderRepository객체의 insertOrder(주문정보)를 실행해서 주문정보를 저장한다.
+			주문이 완료되면
+			위에서 조회된 책정보의 재고량에서 구매수량만큼 감소시킨다.
+			로그인된 사용자의 포인트를 주문금액의 1%만큼 증가시킨다.
+			포인트 변경후 고객의 포인트가 해당 등급의 기준의 초과했을 경우 등급도 변경한다.
+	- BookApp
+		orderBook() 구현
+			책번호, 구매수량을 입력받는다.
+			BookStoreService객체의 order(책번호, 구매수량)을 실행하면 주문이 완료된다.
+
+4.내정보
+	- BookStoreService
+		getMyInfo() 구현
+			loginedUser가 null이면 로그인정보가 존재하지 않는 것이므로 UserException 발생 - 로그인이 필요한 서비스입니다.
+			loginedUser 정보를 반환한다.
+	- BookApp
+		displayMyInfo() 구현
+			BookStoreService객체의 getMyInfo()를 실행해서 사용자정보를 획득한다.
+			획득된 사용자 정보를 출력한다.
+			(사용자아이디, 이름, 고객등급, 포인트)
+
+5.주문내역
+	- OrderRepository
+		getAllOrders() 구현 <-- 새로 추가한 메소드 임, getOrdersByUserId(String userId)는 삭제
+			모든 주문정보를 반환한다.
+	- BookStoreService
+		getMyOrderList() 구현 < -- getMyOrderList메소드의 반환타입을 List<Order>에서 List<Map<String, Object>>로 변경
+			loginedUser가 null이면 로그인정보가 존재하지 않는 것이므로 UserException 발생 - 로그인이 필요한 서비스입니다.
+			로그인한 사용자의 주문상세내역을 저장하기 위해서 새로운 ArrayList<Map<String, Object>>객체를 생성한다.
+			OrderRepository객체의 getAllOrders()를 실행해서 모든 주문정보를 획득한다.
+			모든 주문정보중에서 로그인 사용자의 아이디와 주문한 사람아이디가 동일한 Order객체를 찾는다.
+			Order객체에서 책번호를 획득하고, 그 책번호로 BookRepository의 getBookByNo(책번호)를 실행해서 주문한 책정보를 획득한다.
+			주문상세내역정보는 책번호, 책제목, 구매수량수량, 총구매상품가격, 적립되는 포인트 등으로 구성된다.
+			HashMap객체를 생성해서 구매내역정보(책번호, 책제목, 구매수량, 총구매가격, 적립되는 포인트)를 저장한다.
+			map.put("userId", 주문자아이디);
+			map.put("userName", 주문자이름); 처럼 저장하면 됨
+			주문상세내역정보가 들어있는 HashMap객체를 새로 생성한 ArrayList<Map<String, Object>>객체에 저장한다
+			
+	- BookApp
+		displayMyOrderHistory() 구현
+			BookStoreService객체의 getMyOrderList()를 실행해서 주문상세내역정보들을 획득한다.
+			획득된 ArrayList<Map<String, Object>>에서 Map객체를 하나씩 꺼내서 주문상세내역정보를 출력한다
+			(책정보, 책제목, 구매수량, 총구매가격, 적립되는 포인트 출력)
+
+6. 로그아웃
+	- BookStoreService
+		logout()  구현
+			loginedUser를 null로 초기화한다.
+	- BookApp	
+		logout() 구현
+			BookStoreService객체의 logout()을 실행한다.
+
+		
+	
+			
+		
+
+
+		
+		
+
+		
+	
+		
+	
+		
+
+
+
+
+		
+		
+	
+
+		
+
+			
+		

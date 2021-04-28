@@ -17,6 +17,10 @@ hr 계정 접속 테스트
 hr계정의 테이블 조회하기
  - select * from tabs;
 
+날짜 형식 설정 
+도구 - 환경설정 - 데이터베이스 - nls
+날짜 형식 부분 yyyy/mm/dd hh24:m1:ss
+입력
 
 **=======================데이터베이스의 특징==================================
 실시간 접근을 지원
@@ -46,27 +50,20 @@ invalid identifier : 컬럼이름 잘못되었을 떄 뜨는 오류, 자주 생�
 
 오라클의 인덱스는 1부터 시작한다.
 
+묵시적 형변환
+  - 알아서 데이터타입이 변환됨
+
+명시적 형변환
+  숫자 -> 문자
+	to_char(숫자, '패턴')
+  날짜 -> 문자
+	to_char(날짜)
+  문자 -> 숫자  		    		'1234' -> 묵시적 형변환 되므로 잘 안쓰임
+	to_number(문자, '바꿀문자의 패턴')	'12,345' -> 명시적 형변환의 대상
+  문자 -> 날짜				'2021/01/04' 등은 묵시적 형변환의 대상
+	to_date(문자, '패턴')	2021년 01월 04일 
+
 **=======================KeyWord============================================
-select, from, where
-and, or, between A and B(경계값 포함) // 경계값 포함여부가 헷갈릴 수 있어 부등호를 사용한 and연산을 많이 씀 
-가능한 or 연산자는 쓰지 않으며, 조건이 소수 몇개인 경우(ex. 아이디가 101, 102)
-where manager_id in(101, 102);와 같이 쓴다.
-=>or는 a이면서 b인경우의 조건을 찾을 때만 쓴다.
-
-and와 or를 같이 사용할 경우는 and( a or b)로 괄호를 꼭 써줘야 한다. (안쓰면 다른값)	--
-
-Like => 쿼리의 성능을 떨어트린다. /'='연산만 가능하기 때문에 in과 함께 쓰진 못한다.
-
-ex) 책제목 like '%자바%' 제목에 "자바"가 포함되어 있는 모든책
-    % : 0개이상의 모든 문자 
-
-is null
-is not null
-
-dual => 1행1열짜리 테이블 (오라클에서 기본 제공), 간단한 연산 결과 확인 시 사용
-ex) select 100*3 from dual; (만약에 employees였으면 employees의 행의 갯수만큼 출력이된다)
-
-
 **문법 순서
 select
 from
@@ -74,6 +71,44 @@ from
 [group by 컬럼명 혹은 표현식]
 [having 조건식]
 [order by 컬럼명 혹은 표현식]
+
+select, from, where
+
+and, or, between A and B(경계값 포함) 
+-  경계값 포함여부가 헷갈릴 수 있어 부등호를 사용한 and연산을 많이 씀 
+   가능한 or 연산자는 쓰지 않으며, 조건이 소수 몇개인 경우(ex. 아이디가 101, 102)
+
+in   
+-  where manager_id in(101, 102);와 같이 쓴다.
+    =>or는 a이면서 b인경우의 조건을 찾을 때만 쓴다.
+        and와 or를 같이 사용할 경우는 and( a or b)로 괄호를 꼭 써줘야 한다. (안쓰면 다른값)	
+
+Like 
+-  쿼리의 성능을 떨어트린다. /'='연산만 가능하기 때문에 in과 함께 쓰진 못한다.
+    ex) 책제목 like '%자바%' 제목에 "자바"가 포함되어 있는 모든책
+    % : 0개이상의 모든 문자 
+
+is null
+is not null
+
+dual 
+-  1행1열짜리 테이블 (오라클에서 기본 제공), 간단한 연산 결과 확인 시 사용
+    ex) select 100*3 from dual; (만약에 employees였으면 employees의 행의 갯수만큼 출력이된다)
+
+형변환은 
+숫자    문자    날짜 -> 문자를 기준으로만 형변환이 가능하다.
+
+to_char(숫자, '포맷형식') : 숫자를 지정된 포맷형식으로 변환
+to_number('특정패턴의 숫자형식 문자', '패턴')
+to_date()
+
+패턴문자
+9 : 숫자
+0 : 숫자
+$ : 달러기호
+. : 소숫점
+, : 자릿수
+
 
 
 ERD(Entity Relational Diagram)
@@ -86,20 +121,26 @@ ERD(Entity Relational Diagram)
 ㅇ 단일행 함수
   - 조회된 행마다 하나의 결과를 반환
   - 중첩해서 사용가능
+sysdate
+-  현재날짜
 
+round
+
+trunc (대상 숫자, 자릿수)
+-  소수점 버리기
 ㅇ 다중행 함수
 
+substr
+
+instr
+
+replace
 
 
-
-
-
-
-
-
-
-
-
+ㅇ 기타함수
+ nvl(null값이 예상되는 컬럼, 대체할 값)
+null과 사칙연산하면 무조건null이 됨
+null과 계산해야될 일이 있을 때 사용
 
 
 --0426 SQL 코드 
@@ -267,3 +308,90 @@ select employee_id, first_name, department_id
 from employees
 where department_id not in (30,50,60,80)
 order by department_id asc;
+
+
+=========================0428=============================
+select
+trunc(1234.56789, 4),   --소수점 4자리까지
+trunc(1234.56789, 2),   --소수점 2자리까지
+trunc(1234.56789, -1),
+trunc(1234.56789, -3),
+trunc(1234.56789, -6)
+from dual;
+
+select sysdate from dual; --현재날짜, 시간정보 반환
+
+select MONTHS_BETWEEN(SYSDATE,hire_date) from employees;
+
+select employee_id, first_name, hire_date, trunc(MONTHS_between(Sysdate,hire_date),0)
+from employees;
+
+--날짜연산
+-- date + 숫자 -> 날짜: date에서 숫자만큼 경과된 날짜
+-- date - 숫자 -> 이전 날짜
+-- date = date -> 두 날짜 간의 day 
+select sysdate +5, sysdate-5 from dual;
+
+select trunc(sysdate - date '2021-04-27',0) from dual;
+
+select sysdate, next_day(sysdate,'월') --그 다음 주의 해당 요일
+
+--last_day (날짜) : 
+from dual;
+
+--묵시적 형변환
+select employee_id, salary
+from employees
+where salary>=15000;
+
+select employee_id, salary
+from employees
+where salary>='15000';  -->숫자로 자동 형변환
+
+select employee_id, first_name, hire_date
+from employees
+where hire_date>'2007,01,01';  -->날짜로 자동 형변환
+
+select employee_id, first_name, salary, to_char(salary, '999,999')
+from employees;
+
+select employee_id, first_name, salary, to_char(salary, '000,000')
+from employees;
+
+
+select employee_id, first_name, salary, to_char(salary, '999,999'), commission_pct, to_char(commission_pct, '0.99')
+from employees
+where commission_pct is not null;
+
+--날짜 -> 형식화된 문자열
+select employee_id, first_name, hire_date,
+            to_char(hire_date, 'yyyy'),
+            to_char(hire_date,'mm'),
+            to_char(hire_date,'dd'),
+            to_char(hire_date,'yyyy/mm/dd'),
+            to_char(hire_date,'yyyy"년 "mm"월" dd"일" day'),
+            to_char(hire_date,'hh:mi:ss'),
+            to_char(hire_date,'hh"시" mi"분" ss"초"')
+from employees;
+
+--문자 -> 숫자
+select ' 100' + '100' from dual;    --묵시적 형변환
+select to_number('1,000','9,999') + to_number('1,000', '9,999') from dual; -- 명시적 형변환
+
+--문자 -> 날짜
+select sysdate - to_date('2020/12/25', 'yyyy/mm/dd') from dual;
+
+--nvl 함수
+-- nvl(null값이 예상되는 컬럼 혹은 표현식, 대체할 값)
+select nvl(1000, 0),
+            nvl(null, 0)
+from dual;
+
+--널과 사칙연산을 하면 null이된다.
+select 100+null, 100-null, 100*null
+from dual;
+
+--employees 테이블에서 사원아이디, 이름, 급여, 커미션이 적용된 급여를 조회하기
+select employee_id, first_name, salary, salary+salary*nvl(commission_pct, 0)    --format에는 commission과 같은 타입이 들어가야함
+from employees;
+

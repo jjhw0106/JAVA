@@ -1,8 +1,4 @@
-/app/
-/dao/
-/exception/
 /service/
-/utils/
+/dao/
+/app/
 /vo/
-/todos.csv
-/users.csv

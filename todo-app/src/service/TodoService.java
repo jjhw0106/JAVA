@@ -1,12 +1,17 @@
 package service;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import app.TodoApp;
 import dao.TodoDao;
 import dao.UserDao;
 import exception.TodoException;
 import vo.Todo;
 import vo.User;
+
+import static utils.KeyboardUtils.readString;
 
 public class TodoService {
 
@@ -21,13 +26,17 @@ public class TodoService {
 	 */
 	public void 회원가입서비스(User user) {
 		// 1. 아이디로 저장된 사용자정보를 조회한다.
-		if (userDao.getUserById(user.getId()) != null) {
-			throw new TodoException("이미 사용중인 아이디입니다.");
-		}
-		user.setCreatedDate(new date) 
 		// 2. 사용자정보가 존재하면 TodoException 발생 - 이미 사용중인 아이디 입니다.
 		// 3. User객체에 현재 날짜와 시간정보를 저장한다.
 		// 4. UserDao객체의 insertUser메소드를 실행해서 사용자정보를 저장시킨다.
+
+		if (userDao.getUserById(user.getId()) != null) {
+			throw new TodoException("이미 사용중인 아이디입니다.");
+		}
+
+		user.setCreatedDate((new Date()));
+
+		userDao.insertUser(user);
 	}
 
 	/**
@@ -38,6 +47,10 @@ public class TodoService {
 	 */
 	public void 로그인서비스(String id, String password) {
 		// 1. 아이디로 저장된 사용자 정보를 조회한다.
+		// 2. 사용자정보가 존재하지 않으면 TodoException 발생 - 아이디 혹은 비밀번호가 올바르지 않습니다.
+		// 3. 탈퇴한 사용자면 TodoException 발생 - 탈퇴처리된 사용자입니다.
+		// 3. 비밀번호가 일치하지 않으면 TodoException 발생 - 아이디 혹은 비밀번호가 올바르지 않습니다.
+		// 4. 조회된 사용자정보를 loginedUser에 저장
 		User getUser = userDao.getUserById(id);
 		if (getUser == null) {
 			throw new TodoException("아이디 혹은 비밀번호가 올바르지 않습니다.");
@@ -45,15 +58,11 @@ public class TodoService {
 		if (getUser.getDeletedDate() != null) {
 			throw new TodoException("탈퇴처리된 사용자입니다.");
 		}
-		if (password != getUser.getPassword()) {
+		if (!password.equals(getUser.getPassword())) {
 			throw new TodoException("아이디 혹은 비밀번호가 올바르지 않습니다.");
 		}
 
 		loginedUser = getUser;
-		// 2. 사용자정보가 존재하지 않으면 TodoException 발생 - 아이디 혹은 비밀번호가 올바르지 않습니다.
-		// 3. 탈퇴한 사용자면 TodoException 발생 - 탈퇴처리된 사용자입니다.
-		// 3. 비밀번호가 일치하지 않으면 TodoException 발생 - 아이디 혹은 비밀번호가 올바르지 않습니다.
-		// 4. 조회된 사용자정보를 loginedUser에 저장
 	}
 
 	/**
@@ -84,6 +93,13 @@ public class TodoService {
 		// 2. loginedUser의 비밀번호와 비밀번호가 일치하지 않으면 TodoException 발생 - 아이디 혹은 비밀번호가 올바르지
 		// 않습니다.
 		// 3. 새 비밀번호로 loginedUser의 비밀번호 변경
+		if (!로그인여부제공서비스()) {
+			throw new TodoException("로그인 후 사용가능한 서비스입니다.");
+		}
+		if (!loginedUser.getPassword().equals(oldPassword)) {
+			throw new TodoException("아이디 혹은 비밀번호가 올바르지 않습니다.");
+		}
+		loginedUser.setPassword(password);
 	}
 
 	/**
@@ -108,6 +124,13 @@ public class TodoService {
 		// 3. Todo객체의 작성자에 현재 로그인된 사용자의 아이디를 설정한다.
 		// 3. Todo객체의 createdDate에 현재 날짜와 시간정보 설정
 		// 4. TodoDao객체의 insertTodo를 실행시켜서 저장시킨다.
+		if (loginedUser == null) {
+			throw new TodoException("로그인 후 사용가능한 서비스입니다.");
+		}
+		todo.setStatus(Todo.TODO_STATUS_ADDED);
+		todo.setCreatedDate(new Date());
+		todo.setWriter(loginedUser);
+		todoDao.insertTodo(todo);
 	}
 
 	/**
@@ -119,7 +142,18 @@ public class TodoService {
 		// 1. 로그인여부제공서비스()를 실행해서 로그인되어 있지 않으면 TodoException 발생 - 로그인 후 사용가능한 서비스입니다.
 		// 2. TodoDao객체에서 모든 일정정보를 조회한다.
 		// 3. 로그인한 사용자가 작성자로 설정되어 있는 일정만 ArrayList에 담아서 반환한다.
-		return null;
+
+		if (!로그인여부제공서비스()) {
+			throw new TodoException("로그인 후 사용가능한 서비스입니다.");
+		}
+
+		ArrayList<Todo> myTodoList = new ArrayList<Todo>();
+		for (Todo todo : todoDao.getTodos()) {
+			if (todo.getWriter().equals(loginedUser)) {
+				myTodoList.add(todo);
+			}
+		}
+		return myTodoList;
 	}
 
 	/**
@@ -134,6 +168,7 @@ public class TodoService {
 		// 3. 일정정보가 존재하지 않으면 TodoException 발생 - 일정번호에 해당하는 일정정보가 존재하지 않습니다.
 		// 4. 일정정보 작성자와 로그인한 사용자가 일치하지 않으면 TodoException - 다른 사용자의 일정은 조회할 수 없습니다.
 		// 5. 조회된 일정정보를 반환한다.
+
 		return null;
 	}
 
@@ -193,6 +228,7 @@ public class TodoService {
 	 */
 	public void 프로그램종료서비스() {
 		// 1. UserDao 객체의 saveData()를 실행해서 db에 저장된 사용자정보를 파일로 기록하게 한다.
+		userDao.saveData();
 		// 2. TodoDao 객체의 saveData()를 실행해서 db에 저장된 사용자정보를 파일로 기록하게 한다.
 
 	}

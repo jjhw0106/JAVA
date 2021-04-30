@@ -15,6 +15,9 @@ import utils.StringUtils;
 import vo.User;
 
 public class UserDao {
+	public UserDao() {
+		loadData();
+	}
 
 	private List<User> db = new ArrayList<User>();
 
@@ -44,7 +47,7 @@ public class UserDao {
 	 */
 	public User getUserById(String id) {
 		for (User user : db) {
-			if (user.getId() == id) {
+			if (user.getId().equals(id)) {
 				return user;
 			}
 		}
@@ -55,7 +58,7 @@ public class UserDao {
 	 * users.csv에 기록된 사용자정보를 읽어서 db에 저장한다.
 	 */
 	public void loadData() {
-		try (FileReader fr = new FileReader("src/users.csv");
+		try (FileReader fr = new FileReader("users.csv");
 				BufferedReader br = new BufferedReader(fr)) {
 			String value = null;
 			while ((value = br.readLine()) != null) {
@@ -83,7 +86,7 @@ public class UserDao {
 	 * db에 저장된 사용자 정보를 users.csv 파일에 저장한다.
 	 */
 	public void saveData() {
-		try (PrintWriter pw = new PrintWriter("src/users.csv")) {
+		try (PrintWriter pw = new PrintWriter("users.csv")) {
 			for (User user : db) {
 				StringBuilder sb = new StringBuilder();
 				sb.append(user.getId()).append(",");

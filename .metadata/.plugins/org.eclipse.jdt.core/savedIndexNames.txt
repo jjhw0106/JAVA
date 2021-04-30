@@ -1,23 +1,6 @@
-INDEX VERSION 1.131+C:\Users\jjhw0\java\workspace_study\.metadata\.plugins\org.eclipse.jdt.core
-2446798781.index
-616840867.index
-1772165109.index
-3958467462.index
-2701284951.index
-3087354070.index
-4129240239.index
-1574843208.index
-3929334294.index
-769432709.index
-2149177013.index
-3345657675.index
-3974430922.index
-2335004771.index
-3377976314.index
-1431816393.index
-3443821238.index
-289967073.index
-469372242.index
-3617260273.index
+INDEX VERSION 1.131+C:\workspace\Ho_study\.metadata\.plugins\org.eclipse.jdt.core
 1305900989.index
+289967073.index
+3422254660.index
+2446798781.index
 2080245616.index

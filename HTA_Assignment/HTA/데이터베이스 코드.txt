@@ -491,3 +491,38 @@ from employees e, jobs j, departments d
 where e.salary<(j.min_salary+j.max_salary)/2
 and e.department_id = d.department_id
 and e.job_id = j.job_id;
+
+
+==============0430==================================
+-- 비등가조인
+-- 모든 사원들의 아이디, 이름, 급여 급여등급을 조회하기
+-- 아이디, 이름, 급여 - EMPLOYEES
+-- 급여등급 - SALARY_GRADE
+-- 사원의 급여가 급여등급정보의 최소급여 이상이고, 최대급여 이하인 행과 조인
+
+SELECT *
+FROM EMPLOYEES E, SALARY_GRADE S
+WHERE E.SALARY >= S.MIN_SALARY AND E.SALARY <=S.MAX_SALARY
+ORDER BY E.EMPLOYEE_ID;
+
+-- 자체조인(SELF JOIN)
+select 상사.employee_id, 상사.first_name 
+from employees 부하, employees 상사
+where 부하.employee_id= 101
+and 부하.manager_id = 상사.employee_id;
+
+
+--60번 부서에 소속된 사원들의 사원아이디, 사원이름, 상사의 아이디, 상사의 이름 조회하가ㅣ
+select a.employee_id, a.first_name, b.employee_id, b.first_name 
+from employees a, employees b
+where a.department_id = 60
+and a.manager_id = b.employee_id;
+
+-- 60번 부서에 소속된 사원들의 사원아이디, 사원이름, 사원의 소속부서명, 상사의 아이디, 상사의 이름, 상사의 소속부서명 조회하기
+select a.employee_id,a.first_name, a.department_id, d1.department_name,
+       b.employee_id 상사아이디, b.first_name 상사이름, b.department_id 상사부서 , d2.department_name
+from employees a, employees b, departments d1, departments d2
+where a.department_id = 60
+and a.department_id = d1.department_id
+and b.department_id = d2.department_id
+and a.manager_id = b.employee_id;

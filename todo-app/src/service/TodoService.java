@@ -22,8 +22,9 @@ public class TodoService {
 	public void 회원가입서비스(User user) {
 		// 1. 아이디로 저장된 사용자정보를 조회한다.
 		if (userDao.getUserById(user.getId()) != null) {
-			throw new 
+			throw new TodoException("이미 사용중인 아이디입니다.");
 		}
+		user.setCreatedDate(new date) 
 		// 2. 사용자정보가 존재하면 TodoException 발생 - 이미 사용중인 아이디 입니다.
 		// 3. User객체에 현재 날짜와 시간정보를 저장한다.
 		// 4. UserDao객체의 insertUser메소드를 실행해서 사용자정보를 저장시킨다.

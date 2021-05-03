@@ -526,3 +526,120 @@ where a.department_id = 60
 and a.department_id = d1.department_id
 and b.department_id = d2.department_id
 and a.manager_id = b.employee_id;
+
+====================0503==================================
+select e.employee_id, e.first_name, e.department_id,d.department_name 
+from employees e, departments d
+where e.employee_id=d.department_id(+)
+and e.commission_pct is not null
+order by e.employee_id;
+
+--90번 부서에 소속된 사원들의 사원 아이디, 이름 , 해당 사원의 상사 이름을 조회하기
+select e.employee_id, e.first_name, e2.first_name
+from employees e, employees e2
+where e.department_id = 90
+and e.manager_id = e2.employee_id(+);
+
+--ANSI 조인 (오라클 외에서도 사용 가능한 sql)
+SELECT E.EMPLOYEE_ID, E.FIRST_NAME, J.JOB_ID, J.JOB_TITLE
+FROM EMPLOYEES E JOIN JOBS J ON E.JOB_ID = J.JOB_ID
+WHERE E.DEPARTMENT_ID = 90;
+
+-- 사원의 아이디, 이름, 직종아이디, 직종제목, 소속부서 아이디, 소속부서명 조회하기
+select e.employee_id, e.first_name, j.job_title, e.department_id, d.department_name, l.city
+from employees e join jobs j on e.job_id = j.job_id
+                 join departments d on e.department_id = d.department_id
+                 join locations l on d.location_id = l.location_id
+where e.department_id = 90;
+
+-- 90번 부사에 소속된 사원의 아이디, 이름, 급여, 급여등급을 조회하기
+select e.employee_id, e.first_name,e.salary,s.grade
+from employees e, salary_grade s
+where e.department_id = 90
+and e.salary >= s.min_salary and e.salary<=s.max_salary;
+
+
+-- 부서아이디, 부서명, 부서담당 아이디, 부서담당자 이름 조회하기
+-- 부서 담당자가 결정되어 있지 않은 부서도 조회한다.
+select d.department_id, d.department_name, d.manager_id, e.first_name
+from employees e, departments d 
+where d.manager_id = e.employee_id(+);
+
+--left outer join : 선행 테이블의 모든 행이 조회되도록 한다.(포괄조인 역할)
+select d.department_id, d.department_name, d.manager_id, e.first_name
+from departments d left outer join employees e on d.manager_id = e.employee_id;
+
+--right outer join : 후행 테이블의 모든 행이 조회되도록 한다.
+select d.department_id, d.department_name, d.manager_id, e.first_name
+from departments d right outer join employees e on d.manager_id = e.employee_id;
+
+
+------CREATE - INSERT-----------------
+create table sample_books(
+    book_no number(4) ,
+    book_title varchar2(200),
+    book_writer varchar2(100),
+    book_price number(8),
+    book_discount_price number(8),
+    book_stock number(4),
+    book_created_date date
+);
+
+--테이블에 새로운 행 추가하기
+--행의 모든 컬럼의 값을 지정해서 추가하기  ->주로 사용하는 방법이다
+--맨날 쓰는 값의 경우 (book_created_date)와 같은 경우는 create문에서 book_created_date date defualt sysdate
+--와 같이 default값을 선언해준다.
+INSERT INTO SAMPLE_BOOKS
+(book_no, book_title, book_writer, book_price, book_discount_price, book_stock,book_created_date)
+values
+(101, '자바의정석','남궁성',35000,29000,1000,sysdate);
+
+--행의 특정 컬럼에만 값을 지정해서 추가, 생략된 컬럼에는 null값이 저장
+insert into sample_books
+(book_no, book_title, book_price, book_created_date)
+values
+(102, '이것이 자바다', 28000, sysdate);
+
+--행을 추가할 떄 행의 모든 컬럼에 값을 추가하고, 컬럼의 순서 그대로 값을 컬럼의 순서 그대로 값을 추가할 때는
+--컬럼명을 생략할 수 있다.
+insert into sample_books
+values(103,'해를품은달','김유정',30000,15000,500,sysdate);
+
+
+insert into sample_books
+(book_no, book_title, book_writer, book_price, book_discount_price, book_stock) -- createddate는 default를 통해 추가해줘서 안적어도 됨
+values
+(104,'스프링 인 액션','미상', 30000,27000,20);
+
+
+------DELETE - UPDATE-----------------
+
+--테이블에 저장된 모든 데이터 삭제
+delete from sample_books;
+
+--테이블에 저장된 데이터 중에서 특정 행을 삭제하기
+delete from sample_books
+where book_title like '%자바%';
+
+select*
+from sample_books;
+
+--테이블에 저장된 데이터 변경하기
+UPDATE SAMPLE_BOOKS
+SET
+    BOOK_PRICE =10000;  --모든 책의 가격이 10000으로 바뀜
+    
+    
+UPDATE SAMPLE_BOOKS
+SET
+    BOOK_PRICE =10000
+WHERE BOOK_PRICE>25000;
+
+UPDATE SAMPLE_BOOKS
+SET
+    BOOK_WRITER = '신용권',
+    BOOK_PRICE = 35000,
+    BOOK_DISCOUNT_PRICE = 31500,
+    BOOK_STOCK = 50
+WHERE
+    BOOK_NO = 102;

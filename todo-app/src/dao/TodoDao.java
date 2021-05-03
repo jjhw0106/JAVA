@@ -4,9 +4,11 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
+import utils.StringUtils;
 import vo.Todo;
 
 public class TodoDao {
@@ -38,6 +40,11 @@ public class TodoDao {
 	 * @return Todo정보
 	 */
 	public Todo getTodoByNo(int no) {
+		for (Todo todo : db) {
+			if (todo.getNo() == no) {
+				return todo;
+			}
+		}
 		return null;
 	}
 
@@ -74,6 +81,24 @@ public class TodoDao {
 	 * db에 저장된 Todo 정보를 totos.csv 파일에 저장한다.
 	 */
 	public void saveData() {
+		try (PrintWriter pw = new PrintWriter("todos.csv");) {
+			for (Todo todo : db) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(todo.getNo()).append(",");
+				sb.append(todo.getTitle()).append(",");
+				sb.append(todo.getWriter().getId()).append(",");
+				sb.append(StringUtils.dateToString(todo.getDay())).append(",");
+				sb.append(todo.getStatus()).append(",");
+				sb.append(todo.getText()).append(",");
+				sb.append(StringUtils.dateToString(todo.getCreatedDate())).append(",");
+				sb.append(StringUtils.dateToString(todo.getCompletedDate())).append(",");
+				sb.append(StringUtils.dateToString(todo.getDeletedDate()));
+
+				pw.println(sb);
+			}
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 
 	}
 }

@@ -140,7 +140,7 @@ public class TodoApp {
 		System.out.print("일정 내용을 입력하세요: ");
 		todo.setText(readString());
 		System.out.print("일정 실행일을 입력하세요(2021-04-30): ");
-		todo.setCreatedDate(readDate());
+		todo.setDay(readDate());
 
 		service.새일정추가서비스(todo);
 	}
@@ -167,6 +167,8 @@ public class TodoApp {
 
 	// 삭제할 일정번호를 입력받아서 일정삭제서비스를 실행한다.
 	private void 일정삭제() {
+		System.out.println("삭제할 일정번호를 입력하세요");
+		service.일정삭제서비스(readInt());
 
 	}
 

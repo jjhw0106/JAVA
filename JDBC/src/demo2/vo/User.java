@@ -13,9 +13,11 @@ public class User {
 	private String password;
 	private String email;
 	private String status;
+	private String phone;
 	private Date createdDate;
-	
-	public User() {}
+
+	public User() {
+	}
 
 	public String getId() {
 		return id;
@@ -57,6 +59,14 @@ public class User {
 		this.status = status;
 	}
 
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
 	public Date getCreatedDate() {
 		return createdDate;
 	}
@@ -65,14 +75,18 @@ public class User {
 		this.createdDate = createdDate;
 	}
 
-	
-	//toString 재정의 하는 이유
-	//디버깅할 때 값이 제대로 들어갔는지 확인할 수가 없다.(해시코드로 나온다)
-	//값을 담는 vo인 경우에 toString 재정의하자
+	// toString 재정의 하는 이유
+	// 디버깅할 때 값이 제대로 들어갔는지 확인할 수가 없다.(해시코드로 나온다)
+	// 값을 담는 vo인 경우에 toString 재정의하자
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", name=" + name + ", password=" + password + ", email=" + email + ", status="
-				+ status + ", createdDate=" + createdDate + "]";
+		return "User [id=" + id
+				+ ", name=" + name
+				+ ", password=" + password
+				+ ", email=" + email
+				+ ", status=" + status
+				+ ", createdDate=" + createdDate
+				+ "]";
 	}
-	
+
 }

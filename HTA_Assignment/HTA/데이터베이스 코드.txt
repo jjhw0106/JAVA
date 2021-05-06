@@ -643,3 +643,94 @@ SET
     BOOK_STOCK = 50
 WHERE
     BOOK_NO = 102;
+
+------다중행함수, group by-----------------
+
+-- 다중행 함수
+-- employees 테이블에 저장된 모든 사원들의 수를 조회하기
+select count(*)
+from employees;
+
+--60번 부서에 소속된 사원들의 수를 조회하기
+select count(*)
+from employees
+where department_id = 60;
+
+--커미션을 받은 사원들의 수를 조회
+select count(*)
+from employees
+where commission_pct is not null;
+
+select count(commission_pct)    --null값 카운트 안함
+from employees;
+
+--60번 부서에 소속된 사원들이 받는 급여의 총합을 조회하기
+select sum(salary) 급여총합, min(salary) 최저, max(salary) 최고, avg(salary) 평균급여
+from employees
+where department_id = 60;
+
+-- 그룳함수는 그룹함수가 아닌 표현식과 같이 사용할 수 없다.
+select department_id, sum(salary), avg(salary)  --일반 컬럼과 같이 사용 못한다.
+from employees;
+
+select employee_id,first_name
+from employees
+group by department_id;
+
+-- group by를 사용해서 테이블의 행들을 그룹화하기
+-- 같은 부서에 소속된 사원들끼리 그룹화한 다음, 그룹함수를 적용해보기
+
+select department_id,count(*)
+from employees e
+group by department_id;
+
+--부서별로 사원들을 그룹화한 다음, 부서별로 급여총합, 급여 평균을 조회하기
+ select e.department_id, sum(salary) 합계 , trunc(avg(salary),0) 평균
+ from employees e
+ group by e.department_id;
+
+select d.department_name, sum(salary), round(avg(salary)), d.manager_id
+from employees e, departments d
+where e.department_id = d.department_id
+group by d.department_name, d.manager_id;
+
+
+-- 부서별로 사원들을 그룹화하고, 같은 부서에 소속된 사원들을 직종으로 다시 그룹화한 다음
+-- 해당 그룹에 속하는 사원들의 숫자를 조회하기
+select e.department_id, e.job_id, count(e.employee_id)
+from employees e
+group by e.department_id, e.job_id
+order by e.department_id;
+
+select department_id, job_id, count(*)
+from employees
+group by department_id, job_id
+order by 1, 2;
+
+
+--급여별로 사원들을 그룹화했을 때, 각 급여별 사원수를 조회하기
+select trunc(salary,-3) salary, count(*)
+from employees
+group by trunc(salary, -3)
+order by salary;    --order by 절에는 별칭이 사용 가능하다.
+
+--급여별로 사원수를 조회하기 
+
+select salary, trunc(salary/5000)
+from employees;
+
+select trunc(salary/5000)*5000, count(*)
+from employees
+group by trunc(salary/5000)
+order by 1;
+
+select (trunc(salary/5000)+1)*5000 || '미만' sal, count(*)
+from employees
+group by trunc(salary/5000)
+order by trunc(salary/5000);
+
+--부서별 사원수를 조회하기 (사원수 5미만인 부서의 아이디와 사원수 조회)
+select department_id , count(*)
+from employees
+group by department_id
+having count(*)<5;

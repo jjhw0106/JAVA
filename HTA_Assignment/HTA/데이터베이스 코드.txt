@@ -850,11 +850,11 @@ where d.manager_id is not null
 and d.location_id = l.location_id;
 
 -- 소속부서명이 'Sales'이고, 급여등급이 'A'나 'B'에 해당하는 사원들의 아이디, 이름, 급여, 급여등급을 조회하기
---select e.employee_id, e.first_name, e.salary, s.grade
---from departments d,salary_grade s, employees e
---where d.department_name = 'Sales'
---and s.grade = 'A' or s.grade = 'B';
-
+select e.employee_id, e.first_name, e.salary, sg.grade
+from employees e, departments d, salary_grade sg
+where d.department_name = 'Sales'
+and e.salary>=sg.min_salary and e.salary<=sg.max_salary
+and (sg.grade = 'A' or sg.grade = 'B');
 
 -- 60번 부서에 소속된 사원들의 평균급여를 조회하기
 select round(avg(salary))
@@ -867,14 +867,20 @@ from employees
 group by job_id;
 
 -- 급여 등급별 사원수를 조회하기
-select s.grade, count(*)
-from salary_grade s
-group by s.grade;
+select sg.grade, count(*)
+from employees e, salary_grade sg
+where e.salary>=sg.min_salary and e.salary<=sg.max_salary
+group by sg.grade;
 
 
 -- 2007년 입사한 사원들의 월별 입사자 수를 조회하기
-select count(*)
+select to_char(e.hire_date,'mm'),count(*)
 from  employees e
-where to_date(e.hire_date,'yyyy')= '2007'
-group by to_date(e.hire_date,'MM');
+where to_char(e.hire_date,'yyyy')= '2007'
+group by to_char(e.hire_date,'mm')
+order by to_char(e.hire_date,'mm');
+
+
+
+
 

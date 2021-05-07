@@ -1,0 +1,113 @@
+CREATE TABLE "SALARY_GRADE" 
+   (   "GRADE" VARCHAR2(20), 
+   "MIN_SALARY" NUMBER(8,0), 
+   "MAX_SALARY" NUMBER(8,0)
+   ) ;
+Insert into SALARY_GRADE (GRADE,MIN_SALARY,MAX_SALARY) values ('A',50000,99999);
+Insert into SALARY_GRADE (GRADE,MIN_SALARY,MAX_SALARY) values ('B',25000,49999);
+Insert into SALARY_GRADE (GRADE,MIN_SALARY,MAX_SALARY) values ('C',15000,24999);
+Insert into SALARY_GRADE (GRADE,MIN_SALARY,MAX_SALARY) values ('D',10000,14999);
+Insert into SALARY_GRADE (GRADE,MIN_SALARY,MAX_SALARY) values ('E',5000,9999);
+Insert into SALARY_GRADE (GRADE,MIN_SALARY,MAX_SALARY) values ('F',0,4999);
+commit;
+
+--1. EMPLOYEES 테이블에서 모든 사원들의 사원아이디, 이름, 직종아이디, 급여를 조회하는 SQL을 작성하시오. (5점)
+select employee_id, first_name, job_id, salary
+from employees;
+
+--2. EMPLOYEES 테이블에서 60번 부서에 소속된 사원들의 사원아이디, 이름, 직종아이디, 급여를 조회하는 SQL을 작성하시오. (5점)
+select employee_id, first_name, job_id, salary
+from employees
+where department_id = 60;
+
+--3. EMPLOYEES 테이블에서 커미션을 받는 사원들의 사원아이디, 이름, 직종아이디, 급여, 커미션을 조회하는 SQL을 작성하시오. (5점)
+select e.employee_id, e.first_name, e.salary, e.commission_pct
+from employees e
+where e.commission_pct is not null;
+
+--4. EMPLOYEES 테이블에서 사원들이 종사하고 있는 직종아이디를 중복없이 조회하는 SQL을 작성하시오. 
+select distinct job_id
+from employees;
+
+--5. 시스템의 현재 날짜와 시간정보를 조회하는 SQL을 작성하시오. 
+select to_char(sysdate, 'yyyy-mm-dd hh24:mi:ss') 현재날짜_및_시간 from dual;
+
+--6. EMPLOYEES 테이블에서 입사일을 기준으로 오늘까지 몇 개월째 근무중 인지를 조회하는 SQL을 작성하시오. (5점) 
+--(사원아이디, 사원이름, 입사일, 근무개월수를 조회한다. 근무개월수는 소수점이하는 버린다.) 
+select employee_id, first_name, hire_Date, trunc(months_between(sysdate, hire_date),0) 근무개월수
+from employees;
+
+--7. EMPLOYEES 테이블에서 모든 사원들의 사원아이디, 이름, 직종아이디, 급여, 커미션, 연봉을 조회하는 SQL을 작성하시오. (5점)
+--(연봉은 급여*12 + 급여*12*커미션이다. 커미션이 NULL인 경우 급여*12가 연봉이다.)
+select employee_id, first_name, job_id, salary, nvl(commission_pct,0)*100||'%' 커미션, salary*12+salary*nvl(commission_pct,0)*12 연봉
+from employees;
+
+create table SAMPLE_PRODUCTS(
+    PRODUCT_NO                  NUMBER(5),
+    PRODUCT_NAME                VARCHAR2(250),
+    PRODUCT_COMPANY             VARCHAR2(100),    
+    PRODUCT_PRICE               NUMBER(8),
+    PRODUCT_DISCOUNT_PRICE      NUMBER(8),
+    PRODUCT_STOCK               NUMBER(5),
+    PRODUCT_REGISTERED_DATE     DATE   DEFAULT SYSDATE
+);
+
+
+--8.
+INSERT INTO SAMPLE_PRODUCTS
+(PRODUCT_NO, PRODUCT_NAME, PRODUCT_COMPANY, PRODUCT_PRICE, PRODUCT_DISCOUNT_PRICE, PRODUCT_STOCK)
+VALUES
+(100, '맥북프로', '애플',2000000, 1850000,15);
+
+
+--9. 
+UPDATE SAMPLE_PRODUCTS
+SET 
+    product_discount_price = 1750000, PRODUCT_stock = 12
+WHERE
+    PRODUCT_NO = 100;
+    
+--10.
+DELETE FROM SAMPLE_PRODUCTS
+WHERE product_no =100;
+
+--11.EMPLOYEES와 DEPARTMENTS 테이블을 조인해서 모든 사원들의 아이디, 이름, 직종아이디, 소속부서 아이디, 소속부서명을 조회하는 SQL을 작성하시오. (10점)
+SELECT E.EMPLOYEE_ID, E.FIRST_NAME, E.JOB_ID, D.DEPARTMENT_ID, d.department_name
+FROM EMPLOYEES E, DEPARTMENTS D
+WHERE E.department_id = D.DEPARTMENT_ID (+);
+
+--12.60번 부서에서 근무하는 사원들의 사원의 아이디, 사원의 이름, 사원의 소속부서명, 상사의 이름을 조회하는 SQL을 작성하시오. 
+select e.employee_id, e.first_name, d.department_name, e2.first_name 상사
+from employees e,employees e2, departments d
+where e.department_id = d.department_id
+and e.manager_id = e2.employee_id
+and e.department_id = 60;
+
+--13.
+select first_name, salary, 
+    case
+        when salary>=20000 then salary*0.1
+        when salary>=15000 then salary*0.07
+        when salary>=10000 then salary*0.05
+        when salary>=5000  then salary*0.03
+                           else salary*0.01
+        end tax
+from employees;
+
+--14. EMPLOYEES 테이블에서 전체 직원의 평균급여보다 많은 급여를 받는 사원의 아이디, 이름, 직종아이디, 급여를 조회하는 SQL문을 작성하시오. 
+--select avg(salary) from employees;
+select employee_id, first_name, job_id, salary
+from employees
+where salary > (select avg(salary)
+                from employees);
+                
+-- 15. EMPLOYEES, SALARY_GRADES 테이블을 이용해서 사원들의 급여등급을 판정했을 때, 
+-- 급여등급이 C등급에 해당하는 사원들의 사원아이디, 이름, 급여, 직종아이디, 소속부서명을 조회하는 SQL을 작성하시오. 
+--select first_name from employees where salary>=15000;
+select e.employee_id, e.first_name, e.salary, e.job_id, d.department_name
+from employees e, departments d
+where e.department_id = d.department_id
+and e.employee_id in (select e.employee_id 
+                  from employees e, salary_grade sg
+                  where sg.grade = 'C'
+                  and e.salary>=sg.min_salary and e.salary<=sg.max_salary);

@@ -214,4 +214,80 @@ from employees
 where salary > (select salary 
                 from employees 
                 where employee_id = 100); -- 서브쿼리의 조회결과가 다중행이어서 오류발생
+=======================0510=============================
+------------------상호연관, 스칼라 서브쿼리---------------------------
+--상호연관 서브쿼리
+--서브쿼리 안에서 메인 쿼리의 칼럼이 사용되는 서브쿼리다
+--메인쿼리가 실행될 때마다 서브쿼리가 실행된다
+--상호 연관 서브쿼리는 조회된 행의 갯수만큼 실행된다
 
+--자신이 소속되어 있는 부서의 평균급여보다 급여를 많이 받은 사원을 조회하기
+select o.employee_id, o.first_name, o.salary
+from employees o 
+where o.salary>(select avg(i.salary)
+                            from employees i
+                            where i.department_id = o.department_id);
+                            
+--사용자아이디, 이름, 급여, 자신이 소속된 부서의 평균급여를 조회하기
+
+select e.employee_id,e.first_name, e.salary, (select trunc(avg(i.salary))
+                                                                          from employees i
+                                                                          where i.department_id = e.department_id) avg_salary
+from employees e;
+
+
+-- 부서아이디, 부서명, 소속된 사원수를 조회하기
+select o.department_id, o.department_name,
+            (select count(*)
+            from employees i
+             where i.department_id = o.department_id) as employee_cnt
+from departments o;
+
+
+--스칼라 서브쿼리//조회된 행이 많으면 성능이 많이 떨어질 수 있다.
+--서브쿼리의 실행결과가 단일행 - 단일컬럼인 경우(오직 값이 하나만 조회되는 서브쿼리)
+--사원아이디, 이름, 급여, 사원전체 평균급여를 조회하기
+select o.employee_id,o.first_name, o.salary, 
+            (select trunc(avg(i.salary)) from employees i) avg_salary
+from employees o;
+
+--스칼라 서브쿼리를 update문에서 사용하기
+--사원들의 급여를 전체 사원의 평균급여의 10%만큼 인상시키기
+update employees
+set 
+        salary = salary+(select trunc(avg(salary)*0.1) from employees);
+        
+--스칼라 서브쿼리를 insert문에서 사용하기
+--새로운 사원정보를 추가하기
+insert into employees
+(employee_id, first_name, last_name, email, phone_number, hire_date, job_id, salary, commission_pct, manager_id,department_id)
+values
+(employee_seq.nextval, 'Gildong', 'Hong','GILDONG', '010.1111.2222', sysdate, 'IT_PROG', (select min_salary from jobs where job_id = 'IT_PROG'), null, 103, 60);
+
+
+-----------------view--------------------------------------------
+-- 뷰 (가상의 테이블)
+-- 부서 상세정보를 제공하는 가상의 테이블 생성하기
+-- 부서 상세정보 - 부서아이디, 부서명, 관리자 아이디, 관리자이름, 부서에 소속된 사원수
+create or replace view departments_detail_view
+as
+select D.department_id, D.department_name, D.manager_id, E.first_name, E.last_name, L.city,L.street_address,(select count(*) from employees i where i.department_id = d.department_id) emp_cnt
+from departments d, employees e, locations l
+where d.manager_id = e.employee_id(+)
+and d.location_id = l.location_id;
+
+--view사용 시
+select department_id, department_name, manager_id, first_name, last_name, city, street_address, emp_cnt
+from departments_detail_view
+where department_id = 60;
+
+-- 사원의 상세정보를 제공하는 뷰 생성하기
+-- 사원아이디, 이름, 이메일, 전화번호, 입사일, 근무개월수, 근무년수, 급여, 커미션, 급여등급,
+-- 연봉, 상사의 아이디, 상사이름, 직종아이디, 직종명,  부서아이디, 부서명, 부서관리자이름
+select
+from employees e , salary_grade g, employees m, jobs j, departments d, employees dm
+where e.salary>= g.min_salary and e.salary <=g.max_salary
+and e.manager_id = m.employee_id
+and e.job_id = j.job_id
+and e.department_id = d.department_id
+and d.manager_id = dm.employee_id(+);

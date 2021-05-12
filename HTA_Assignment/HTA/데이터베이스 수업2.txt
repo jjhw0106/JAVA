@@ -35,3 +35,43 @@ CREATE TABLE USERS(
 ㅇ FOREIGN KEY
 	- 해당 컬럼의 값은 다른 테이블 혹은 같은 테이블의 특정 컬럼이 가지고 있는 값만 허용된다.
 
+--------------------------------------------------------------------
+ㅇ 실행계획
+파라미터를 포함한 쿼리문이 올 경우 동일한 쿼리에 대해 실행계획을 반복해서 짤 필요가 없다
+
+
+
+
+
+--------------------------------------------------------------------
+ㅇ 분석함수
+  1. TOP-N분석과 분석함수 사용하기
+    -- 월급에 대한 내림차순으로 정렬했을 때,
+    -- 급여를 가장 많이 받은 사람 3명의 아이디, 이름, 급여 조회하기
+	SELECT ROWNUM, EMPLOYEE_ID, FIRST_NAME, SALARY
+	FROM(SELECT EMPLOYEE_ID, FIRST_NAME, SALARY
+	         FROM EMPLOYEES
+	         ORDER BY SALARY DESC)
+	WHERE ROWNUM<=3;
+  2.
+    -- 
+  3.
+    -- 
+
+--------------------------------------------------------------------
+ㅇ트랜잭션 : 수행되는 명령어의 최소단위
+시작 : 첫번째 DML이 시작하는 순간 자동으로 시작됨
+  - COMMIT : 트랜잭션 내의 DML 실행결과를 데이터베이스에 반영한다.
+  - ROLLBACK : 트랜잭션 내의 DML 실행결과의 데이터베이스 반영을 전부 취소한다.
+//트랜잭션 시작
+INSERT INTO ORDERS VALUES (?, ?, ?)				//주문정보 저장
+INSERT INTO ITEMS VALUES(?, ?, ?)				//주문상품정보 저장
+INSERT INTO ORDER_DELIVERY VALUES(?, ?, ?, ?) 		//배송정보 저장
+INSERT INTO ORDER_PAY VALUES(?, ?, ?, ?) 			//결재정보 저장
+UPDATE PRODUCTS SET PRODUCT_STOCK = ? WHERE		//재고변경
+UPDATE CUSTOMER SET CUST_POINT = ? WHERE		//적립포인트 변경
+COMMIT;	  //즉시 트랜잭션 종료
+
+
+
+

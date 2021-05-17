@@ -1,0 +1,7 @@
+부트스트랩 프레임워크
+div - row - col로 틀을 잡은 후 개발을 진행함
+
+JSP 환경설정
+1. APACHE.ORG -> TOMCAT -> DOWNLOAD -> 10버전으로 다운로드(32/64BIT 윈도우 서비스) ->
+HOST MANAGER, EXAMPLES 체크 -> service name : tomcat10으로 변경, 이름,비번 입력
+

@@ -1,0 +1,165 @@
+--1. employees 테이블에서 사원들의 모든 업무아이디를 조회하기
+select job_id
+from employees;
+
+--2. 급여를 12,000달러 이상 받는 사원의 이름과 급여를 조회하기
+select first_name, salary
+from employees
+where salary >=12000;
+
+--3. 사원번호가 176번 사원의 아이디와 이름 직종을 조회하기
+select e.employee_id, e.first_name, j.job_title
+from employees e, jobs j 
+where e.employee_id=176
+and e.job_id = j.job_id;
+
+--4. 급여를 12,000달러 이상 15,000달러 이하 받는 사원들의 사원 아이디와 이름과 급여를 조회하기
+select employee_id, first_name, salary
+from employees
+where salary>=12000 and salary<=15000;
+
+--5. 2000년 1월 1일부터 2000년 6월 30일 사이에 입사한 사원의 아이디, 이름, 업무아이디, 입사일을 조회하기
+select e.employee_id, e.first_name, e.job_id, e.hire_date
+from employees e
+where to_char(e.hire_date,'yyyy')='2001'
+and TO_CHAR(e.hire_date,'mm') in (1,2,3,4,5,6);
+
+--6. 급여가 5,000달러와 12,000달러 사이이고, 부서번호가 20 또는 50인 사원의 이름과 급여를 조회하기
+select department_id,first_name, salary
+from employees
+where salary between 5000 and 12000
+and department_id in(20,50);
+--and (department_id =20 or department_id = 50); --괄호안치면 (급여만족하며 부서 20) 또는 (부서 50) ->이렇게 됨
+
+--7. 관리자가 없는 사원의 이름과 업무아이디를 조회하기
+select first_name, job_id, manager_id
+from employees
+where manager_id is null;
+
+--8. 커미션을 받는 모든 사원의 이름과 급여, 커미션을 급여 및 커미션의 내림차순으로 정렬해서 조회하기
+select first_name, salary, commission_pct
+from employees
+where commission_pct is not null
+order by salary desc, commission_pct desc;
+
+--9. 이름의 2번째 글자가 e인 모든 사원의 이름을 조회하기
+select first_name
+from employees
+where substr(first_name,2,1)='e'; -- substr(문자열, 시작위치, 나타낼 개수), sql은 1부터 시작
+
+
+--10. 업무아이디가 ST_CLERK 또는 SA_REP이고 급여를 2,500달러, 3,500달러, 7,000달러 받는 모든 사원의 이름과 업무아이디, 급여를 조회하기
+select first_name, job_id, salary
+from employees
+where job_id IN ('ST_CLERK' , 'SA_REP')
+and salary in (2500,3500,7000);
+
+--11. 모든 사원의 이름과 입사일, 근무 개월 수를 계산하여 조회하기, 근무개월 수는 정수로 반올림하고, 근무개월수를 기준으로 오름차순으로 정렬하기
+select first_name, hire_date, round(months_between(sysdate,hire_date),0) 근무개월
+from employees
+order by 근무개월; --정렬에 별칭 사용 가능
+
+--12. 사원의 이름과 커미션을 조회하기, 커미션을 받지 않는 사원은 '없음'으로 표시하기
+select first_name, decode(commission_pct,null,'없음')
+from employees
+where commission_pct is null;
+
+--13. 모든 사원의 이름, 부서번호, 부서이름을 조회하기
+select e.first_name, e.department_id, d.department_name
+from employees e, departments d
+where e.department_id = d.department_id(+);
+
+--14. 80번부서에 소속된 사원의 이름과 업무아이디, 업무제목, 부서이름을 조회하기
+select e.first_name, j.job_id, j.job_title, d.department_name
+from employees e, jobs j, departments d
+where e.department_id = 80
+and e.department_id = d.department_id
+and e.job_id = j.job_id;
+
+--15. 커미션을 받는 모든 사원의 이름과 업무아이디, 업무제목, 부서이름, 부서소재지 도시명을 조회하기
+select e.first_name, j.job_id, j.job_title, d.department_name, l.city
+from employees e, jobs j, departments d, locations l
+where e.commission_pct is not null
+and e.department_id = d.department_id
+and d.location_id = l.location_id
+and j.job_id = e.job_id;
+
+--16. 유럽에 소재지를 두고 있는 모든 부서아이디와 부서이름을 조회하기
+select d.department_id, d.department_name, l.city
+from departments d, locations l
+where d.location_id = l.location_id
+and l.country_id in (select c.country_id
+                    from countries c, regions r
+                    where r.region_name = 'Europe'          --1000,1100,2400,2500,2600,2700,2900
+                    and c.region_id = r.region_id);
+
+--17. 사원의 이름과 소속부서명, 급여, 급여 등급을 조회하기
+select e.first_name, d.department_name, e.salary, sg.grade
+from employees e, salary_grade sg, departments d
+where e.salary >=sg.min_salary and e.salary<=max_salary
+and e.department_id = d.department_id(+);
+
+--18. 사원의 이름과 소속부서명, 소속부서의 관리자명을 조회하기, 소속부서가 없는 사원은 소속부서명 '없음, 관리자명 '없음'으로 표시하기
+select e.first_name, decode(d.department_name,null,'없음',d.department_name) 부서명, decode(me.first_name,null,'없음',me.first_name) 매니저, d.department_id
+from employees e, employees me, departments d
+where e.manager_id = me.employee_id(+)
+and e.department_id = d.department_id(+)
+order by e.first_name asc;
+
+--19.  모든 사원의 급여 최고액, 급여 최저액, 급여 총액, 급여 평균액을 조회하기
+select max(salary), min(salary), sum(salary), round(avg(salary))
+from employees;
+
+--20. 업무별 급여 최고액, 급여 최저액, 급여 총액, 급여 평균액을 조회하기
+select e.job_id, max(salary) 최대급여    --group by 에 들어간 변수 또는 그룹함수만 가능
+from employees e
+group by e.job_id;
+
+--21. 각 업무별 사원수를 조회해서 가장 사원수가 많은 업무 3개를 조회하기, 업무아이디와 사원수 표시하기
+select job_id, 사원수
+from   (select job_id, count(*) 사원수
+        from employees
+        group by job_id
+        order by count(*) desc)
+where rownum<=3;
+
+--22. 관리자별 사원수를 조회하기, 관리자 이름과 그 관리자가 관리하는 사원수 표시하기
+                     
+select e.first_name, 사원수
+from employees e, (select me.employee_id 아이디,count(*) 사원수
+                   from employees e, employees me
+                   where e.manager_id = me.employee_id
+                   group by me.employee_id)
+where e.employee_id in 아이디;
+                     
+
+--23. 각 부서에 대해 부서이름, 관리자 이름, 소속사원 수, 소속사원들의 평균 급여를 조회하기
+--1. 부서별 소속사원 수, 평균급여
+--select d.department_id 부서아이디, count(*) 소속사원수,round(avg(e.salary)) 평균급여
+--from employees e, departments d
+--where e.department_id = d.department_id
+--group by d.department_id;
+
+--2. 부서별 관리자 구하기
+--select d.department_name, me.first_name, me.employee_id
+--from departments d, employees me
+--where d.manager_id = me.employee_id;
+
+select d.department_name,me.employee_id, me.first_name, 소속사원수, 평균급여
+from employees me, departments d, (select d.department_id 부서아이디, count(*) 소속사원수,round(avg(e.salary)) 평균급여
+                                   from employees e, departments d
+                                   where e.department_id = d.department_id
+                                   group by d.department_id)
+where me.department_id = 부서아이디
+and d.manager_id = me.employee_id;
+
+--24. Steven King과 같은 부서에 속한 사원의 이름과 입사일을 조회하기
+--
+--25. 소속 부서의 평균급여보다 많은 급여를 받는 사원의 아이디와 사원이름, 급여, 그 부서의 평균 급여를 조회하기
+--
+--26. Kochhar과 동일한 급여 및 커미션을 받는 모든 사원의 이름과 입사일 급여를 조회하기, 결과에 Kochhar은 포함시키지 않기
+--
+--27. 소속 부서에 입사일이 늦지만, 더 많은 급여를 받는 사원의 이름과 소속부서명, 급여를 조회하기
+--
+--28. 관리자 아이디, 관리자명, 그 관리자가 관리하는 사원수, 그 관리자가 소속된 부서를 조회하기
+

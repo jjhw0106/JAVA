@@ -154,12 +154,59 @@ where me.department_id = 부서아이디
 and d.manager_id = me.employee_id;
 
 --24. Steven King과 같은 부서에 속한 사원의 이름과 입사일을 조회하기
---
+--1.스티븐킹의 부서
+--select e.department_id
+--from employees e
+--where e.first_name = 'Steven' 
+--and e.last_name = 'King';
+--2.해당 부서의 소속사원의 이름 및 입사일
+select e.first_name, e.hire_date
+from employees e
+where e.department_id = (select e.department_id
+                         from employees e
+                         where e.first_name = 'Steven' 
+                         and e.last_name = 'King');
+
 --25. 소속 부서의 평균급여보다 많은 급여를 받는 사원의 아이디와 사원이름, 급여, 그 부서의 평균 급여를 조회하기
---
---26. Kochhar과 동일한 급여 및 커미션을 받는 모든 사원의 이름과 입사일 급여를 조회하기, 결과에 Kochhar은 포함시키지 않기
---
+--1. 부서별 평균급여
+--select e.department_id, round(avg(e.salary))
+--from employees e
+--group by e.department_id;
+--2. 소속 부서보다 급여 많이받는 사원
+select e.employee_id, e.first_name,e.salary, e.department_id 부서아이디, round(평균)
+from employees e, (select e.department_id 부서아이디, avg(e.salary) 평균
+                   from employees e
+                   group by e.department_id)
+where e.department_id = 부서아이디
+and e.salary >= 평균;
+    
+--26. (kochhar없음) Amit과 동일한 급여 및 커미션을 받는 모든 사원의 이름과 입사일 급여를 조회하기, 결과에 Amit은 포함시키지 않기
+--1.Amit가 얼마받는지
+--select e.salary
+--from employees e
+--where e.first_name = 'Amit';
+--2.Amit랑 같은사원
+select e.first_name, e.hire_date, e.salary
+from employees e
+where (e.salary,e.salary*e.commission_pct) = (select e.salary 급여,e.salary*e.commission_pct
+                                              from employees e
+                                              where e.first_name='Amit')
+and e.first_name <>'Amit';
+
 --27. 소속 부서에 입사일이 늦지만, 더 많은 급여를 받는 사원의 이름과 소속부서명, 급여를 조회하기
---
+create view rank_view as
+select  employee_id,
+        row_number()over(PARTITION BY department_id ORDER BY salary DESC) 급여랭킹,
+        dense_rank()over(PARTITION BY department_id ORDER BY hire_date ASC) 연차랭킹
+from employees 
+ORDER BY hire_date ASC;
+
+--drop view rank_view;
+
+select e.department_id,e.first_name, d.department_name, e.salary, 급여랭킹, 연차랭킹
+from employees e, departments d, rank_view v
+where v."급여랭킹"<v."연차랭킹"
+and e.employee_id = v.employee_id
+and e.department_id = d.department_id;
 --28. 관리자 아이디, 관리자명, 그 관리자가 관리하는 사원수, 그 관리자가 소속된 부서를 조회하기
 

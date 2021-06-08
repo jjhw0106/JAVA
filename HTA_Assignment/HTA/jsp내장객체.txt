@@ -1,0 +1,73 @@
+JSP 파일을 변환해서 생성한 java 클래스의 _jspService(request, response) 메소드에 정의된 JSP 내장객체
+
+public final class main_jsp extends HttpJspBase {
+  // main_jsp 설계도로 main_jsp객체를 생성한 후 초기화 작업의 수행을 위해 사용되는 메소드
+  public void _jspInit() {
+  }
+
+  // main_jsp 설계도로 생성한 main_jsp객체가 폐기되기 전에 수행할 작업을 구현하기 위해 사용되는 메소드
+  public void _jspDestroy() {
+  }
+
+  // main.jsp에 대한 요청이 접수될 때마다 실행되는 메소드
+  // Tomcat은 요청이 접수되면 HttpServletRequest(요청객체), HttpServletResponse(응답객체)를
+  // 생성한 다음 모든 요청메세지를 요청객체에 담는다.
+  // Tomcat은 요청메세지를 분석해서 main.jsp에 대한 요청이면, main_jsp 설계도로 생성한 객체의
+  // _jspService(request, response)를 실행한다.
+  // 그리고, _jspService(request, response)를 실행할 때, 미리 생성해둔 요청객체와 응답객체를 매개변수 전달한다.
+  public void _jspService(HttpServletRequest request, HttpServletResponse response)
+      throws IOException, ServletException {
+
+    // JSP의 내장객체를 참조할 참조변수를 선언한다.///////////////////////////////////////////////////////
+    PageContext pageContext;	 // JSP 페이지에 대한 정보를 가지는 객체다.
+    HttpSession session = null;	 // 클라이언트에 대한 정보를 가지는 객체다.
+    ServletContext application;	 // 웹애플리케이션 프로젝트에 대한 정보를 가지는 객체다.
+    ServletConfig config;	 // 서블릿의 설정정보를 가지는 객체다.
+    JspWriter out = null;	 // 텍스트컨텐츠(text, html, xml, json) 클라이언트에게 보내는 객체다.
+    Object page = this;		 // 현재 생성된 이 객체를 참조한다.
+   
+    // JSP의 내장객체를 생성/획득해서 위에서 선언한 참조변수에 대입한다.//////////////////////////////////////
+    pageContext = _jspxFactory.getPageContext(this, request, response,null, true, 8192, true);
+    application = pageContext.getServletContext();
+    config = pageContext.getServletConfig();
+    // - 요청메세지에 세션아이디가 포함되어 있지 않으면 새로운 세션객체를 생성하고, 그 세션객체를 참조하게 한다.
+    //   * 새로 생성한 세션객체의 세션아이디를 클라이언트에게 응답으로 보낸다.
+    // - 요청메세지에 세션아이디가 포함되어 있으면, 세션아이디에 해당하는 세션객체를 찾아서 그 세션객체를 참조하게 한다.
+    // - 요청메세지에 세션아이디가 포함되어 있지만, 세션아이디에 해당하는 세션객체가 없으면, 새로운 세션객체를 생성하고,
+    //   그 세션객체를 참조하게 한다.
+    //   * 새로 생성한 세션객체의 세션아이디를 클라이언트에게 응답으로 보낸다.
+    // - 즉, JSP에서 session은 null이 아니다.
+    // - 결론 
+    // 		- session에는 요청을 접수한 클라이언트 전용의 세션객체가 항상 연결된다.
+    //         	- 세션객체에 정보를 저장하면, 그 세션객체의 주인(클라이언트)만 활용할 수 있다.
+    //         	- 세션객체에는 이 세션객체의 주인인 클라이언트의 정보(아이디, 이름)를 저장해 둔다.
+    //         	- 클라이언트의 요청이 접수될 때 마다, 그 클라이언트 전용의 세션객체가 session으로 참조되고,
+    //            추가적인 작업없이도 세션객체에 보관된 사용자정보를 활용해서 지금 요청한 클라이언트를 식별할 수 있다.
+    session = pageContext.getSession();	
+    out = pageContext.getOut();
+     
+    // JSP 파일의 내용이 여기에 추가된다/////////////////////////////////////////////////////////////////
+    // JSP 파일의 스크립틀릿, 표현식에서는 JSP의 내장객체를 참조하고 있는 참조변수들을 사용해서
+    // JSP 내장객체를 직접 사용할 수 있다.
+    // 	- 사용가능한 내장객체 : request, response, pageContext, session, application, config, out, page
+    //  - 자주 사용되는 내장객체 : request, response, session 정도만 자주 사용된다.
+    <%
+	// 요청객체(HttpServletRequest)를 참조하는 request를 사용하기
+	String id = request.getParameter("id");
+        String password = request.getParameter("password");
+
+	// 세션객체(HttpSession)를 참조하는 session를 사용하기
+        // 1. 클라이언트를 식별할 수 있는 정보를 그 클라이언트 전용의 세션객체에 보관하기
+	//    - 사용자 인증이 완료된 클라이언트에 대해서, 해당 클라이언트의 User정보를 session객체에 담기
+	//      session.setAttribute("USER", user);
+	// 2. 클라이언트의 요청이 접수되었을 때 해당 클라이언트가 누구인지 알아내기
+	//    - session은 언제나 요청을 접수한 클라이언트 전용의 세션객체를 참조하고 있다.
+	//      User loginedUser = (User) session.getAttribute("USER");
+        //      String userId = loginedUser.getId();
+
+        // 응답객체(HttpServletResponse)를 참조하는 response를 사용하기
+        response.sendRedirect("../main.jsp");
+    %>
+
+  }
+}

@@ -1,0 +1,36 @@
+Redirect와 Forward
+Redirect 실행시 request와 response가 사라짐
+forward는 받은 request와 response를 씀
+view2는 내장객체 
+브라우저에서 view2.jsp를 url에 찍어보내지 않는다. 내장객체이기 때문에
+
+java의 웹기술
+	Servlet
+		- 웹 애플리케이션 서버에 실행되는 자바프로그램을 개발할 때 사용되는 기술
+		- JSP가 등장하기 전에 사용했던 웹 애플리케이션 개발 기술이다.
+		- 실제로 모든 JSP는 Servlet으로 변환된 다음 실행된다.
+		- 서블릿은 webapp이 아닌 java에서 만든다.
+		- 서블릿 구현하기
+			1. HttpServlet 클래스를 상속받아서 클래스 정의한다
+			2. void init(), void destroy(), void service(request,response)를 재정의한다.
+		
+	JSP		
+		- HTML 기반의 웹페이지에서 자바코딩을 추가하고 이렇게 개발된 페이지를 
+		  웹애플리케이션 서버에서 실행할 수 있도록 지원하는 기술
+		- JSP의 장점
+			- 디자인요소를 HTML 코드로 바로 작성할 수 있다.
+			- JSP 구성요소(지시어, 스크립틀릿, 표현식 등)을 사용해서 
+			  필요한 로직요소를 JAVA 코드로 구현할 수 있다.
+			- 디자인요소와 로직요소를 하나의 JSP 파일로 만들 수 있다.
+		
+		- JSP의 실행 절차
+			1. 웹 애플리케이션 프로젝트 생성
+			2. JSP 파일(html +java) 작성
+			3. 웹 애플리케이션 프로젝트를 웹애플리케이션 서버에 배포
+			4. 클라이언트가 jsp 페이지의 실행을 요청한다.
+			5. 웹 애플리케이션 서버가 a.jsp -> a_jsp.java(서블릿) -> a_jsp.class파일로 변환
+			   jsp파일을 자바파일로 변환하고 컴파일해서 클래스 파일을 생성한다.
+			6. 클래스파일을 메모리에 로딩해서 객체를 생성 -> _jspInit() 메소드 실행
+			    해서 초기화작업 완료
+			7. _jspService(request, response) 메소드를 실행해서, 
+			   jsp파일의 html컨텐츠와 java코드를 실행해서 동적 HTML 컨텐츠를 응답으로 제공

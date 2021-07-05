@@ -1,0 +1,39 @@
+var x = {
+	run: function(){
+		this
+	}
+}
+
+x.run() -> 이 경우 run()의 this는 x이다. 하지만 자바스크립트에서는 다른 객체의 메소드를 빌려올 수 있기 때문에 x가 아닌 경우가 발생할 수도 있다.
+
+
+var person = {
+	firstName: '홍',
+	lastName: '길동',
+	fullName: function(){
+		return this.firstName+this.lastName;
+	}
+}
+person.fullName(); -> this는 person
+
+var employee={
+	firstName:'김',
+	lastName:'유신'
+	work: function(){
+	...
+	}
+}
+//employee에서 person의 fullName을 쓰고 싶음
+person.fullName.call(employee); 	//person의 fullName을 employee가 call해서 실행함 -> 이 때의 this는 employee
+
+========jQuery========
+var jQuery객체 = {
+	el: button,
+	on: function(eventName, callback) {
+		jQuery객체.callback.call(button);
+	}
+}
+
+$('button').on('click', function(){
+	console.log(this);		-> this에 button
+})

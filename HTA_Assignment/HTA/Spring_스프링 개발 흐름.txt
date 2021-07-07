@@ -1,0 +1,24 @@
+DI(Dependency Injection)
+	의존성 주입받기
+	필요로하는 객체를 외부러부터 주입받는다
+
+DP(Dependency Pull, Dependency Lookoup)
+	의존성 검색하기
+	필요로하는 객체를 미리 만들어진 객체들 중에서 찾아서 사용한다.
+
+스프링 프로젝트 만들기
+- MAVEN을 이용해서 프로젝트를 생성한다.
+	* MAVEN은 빌더도구로써 깃 등과 연동하여 매시각 배포, 컴파일 등의 작업을 설정하면 자동, 반복적으로 실행할 수 있게끔 해준다. (GRADLE, ANT 등)
+
+- group id: 보통 회사의 도메인
+- artifact id: 프로젝트 명
+- pom.xml의  필요한 라이브러리 입력, 메이븐이 알아서 입력된 라이브러리를 추가해줌 (dependency hierarchy에서 확인)
+	- <properties>안에 <maven.compiler.target>11  적은 후 프로젝트 ->maven-> 버전업데이트(자바버전 업데이트)
+	- <dependencies> 태그생성
+	- <dependency> 태그로 필요한 의존성(라이브러리)을 주입
+----------스프링 개발준비 끝------------	
+- 스프링이 객체를 만들게끔 하기위한 환경설정 파일 : context.xml
+- context.xml에 만들고 싶은 클래스, id를 적어줌
+	- <bean id ="h" class="com.sample.Hello"></bean> (id생략시 클래스명이 id, hello(첫글자 소문자로))
+- 위의 설정파일을 읽어서 객체를 생성해줄 놈 : Spring Container (ClassPathXmlApplicationContext, 등..)
+

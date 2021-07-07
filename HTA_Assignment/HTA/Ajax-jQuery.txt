@@ -1,0 +1,50 @@
+var xhr= new XMLHttpRequest();
+	xhr.onreadystatechange= function(){
+	if(xhr.readyState ==4 && xhr.status == 200){
+		// 1. 서버로부터 받은 응답데이터(plainText, json text) 조회
+		var text = xhr.responseText; ==> 이걸 json으로 바꿔서 값을 뽑아냄
+		
+		// 2. 응답데이터를 자바스크립트의 객체나 배열로 변환
+		var data = JSON.parse(text)
+
+		// 3. 응답데이터에서 필요한 정보 조회
+		
+		// 4. 조회된 응답데이터로 HTML 컨텐츠 생성
+
+		// 5. 생성된 HTML 컨텐츠를 화면에 반영
+	}
+}
+xhr.open('get', 'search?opt=title&keyword=자바')
+xhr.send();
+
+// GET방식의 ajax 요청을 서버로 보낸다.
+$.get(url, data, function() {}. dataType)		//url빼고 생략가능
+	url: 요청 URL
+ 	data: 서버로 보내는 데이터
+		'opt = title&keyword=자바'
+		{opt:'title', keyword:'자바'}
+	function(responseData){...} : 서버로부터 성공적인 응답이 왔을 때 실행되는 메소드
+		responseData는 서버가 보낸 응답데이터가 들어있다.
+		서버가 보낸 응답데이터의 컨텐츠 타입에 따라서 해당 타입의 객체로 미리 변환되어 있다.
+	dataType: 응답 데이터의 데이터 타입
+
+// POST방식의 ajax 요청을 서버로 보낸다.
+$.post(url, data, function(responseData) {...}), dataType)   		//url빼고 생략가능
+
+// GET방식의 ajax 요청을 보내고 JSON 형식의 데이터를 응답으로 받는다.
+$.getJSON(url, data, function(responseData) { ... }
+
+// 범용 Ajax 요청 함수			==> 하나의 객체로 전달받음
+$.ajax({
+	type	: '요청방식',	// GET이나 POST
+	url	: 요청 url,		
+	data	: {},		// 서버로 보내는 데이터
+	contentType		// 서버로 보내는 데이터의 타입, 기본값은 application/x-www-form-urlEncoded다.
+				   multipart/form-data, application/json 등이 올 수 있다.
+	dataType:		// 서버로부터 받는 데이터 타입
+				   "xml", "html", "text", "script", "json", "jsonp"
+	success:			// 성공적인 응답이 왔을 때 실행할 함수
+	error: 			// 요청이 실패했을 때 실행할 함수
+	complete:		// 성공 실패여부와 상관없이 응답이 오면 실행할 함수
+	beforeSend:		// 요청을 보내기 전에 실행할 함수
+})

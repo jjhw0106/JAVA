@@ -1,0 +1,11 @@
+$("#table-cart-items :checkbox")
+	아이디가 table-cart-items인 엘리먼트안에 있는 모든 체크박스를 선택한다.
+$("#checkbox-all-selected")
+	아이디가 checkbox-all-selected인 엘리먼트를 선택한다.
+$("#table-cart-items tbody :checkbox")
+	아이디가 table-cart-items인 엘리먼트안에 있는 tbody 엘리먼트 안에 있는 모든 체크박스를 선택한다.
+$("#table-cart-items tbody :checkbox:checked)
+	아이디가 table-cart-items인 엘리먼트안에 있는 tbody 엘리먼트 안에 있는 모든 체크박스 중에서 체크된 것만 선택한다.
+$("#table-cart-items tbody tr:has(:checked)")
+	아이디가 table-cart-items인 엘리먼트안에 있는 tbody 엘리먼트 안에 있는 tr 엘리먼트 중에서 체크된 상태의 자손 엘리먼트를
+	가지고 있는 tr 엘리먼트를 선택한다.

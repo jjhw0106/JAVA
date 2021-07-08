@@ -249,8 +249,8 @@ HTML DOM 조작
 	* 추가기능
 		$(selector).append()		엘리먼트의 맨마지막 자식요소로 추가된다.
 		$(selector).prepend()		엘리먼트의 첫번째 자식요소로 추가된다.
-		$(selector).after()		엘리먼트의 동생으로(뒤에) 추가된다.
-		$(selector).before()		엘리먼트의 형으로(앞에) 추가된다.
+		$(selector).after()			엘리먼트의 동생으로(뒤에) 추가된다.
+		$(selector).before()			엘리먼트의 형으로(앞에) 추가된다.
 		* 추가기능도 메소드 체이닝을 이어갈 수 있다.
 	* 삭제기능
 		$(selector).remove()		엘리먼트를 삭제한다.(자식요소도 같이 삭제된다.)

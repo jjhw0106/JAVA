@@ -1,0 +1,20 @@
+xml 다루기
+<boxOfficeResult>
+	<boxofficeType>일별 박스오피스</boxofficeType>
+	<showRange>20120101~20120101</showRange>
+	<dailyBoxOfficeList>
+		<dailyBoxOffice>
+			<rank>1</rank>
+			<movieNm>미션임파서블</movieNm>
+		</dailyBoxOffice>
+		<dailyBoxOffice>
+			<rank>2</rank>
+			<movieNm>마이 웨이</movieNm>
+		</dailyBoxOffice>
+	</dailyBoxOfficeList>
+</boxOffcieResult>
+
+$(xmlDoc).find('dailyBoxOffice').each(function(index, item) {
+	var rank = $(item).find('rank').text();
+	var name = $(item).find('movieNm').text();
+})

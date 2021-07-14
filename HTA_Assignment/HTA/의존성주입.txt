@@ -1,0 +1,46 @@
+
+// 수동 의존성 주입
+<bean id = "file" class="FileDataWriter"/>
+
+// wired=> 빈을 묶어주는 작업
+<bean id="saver" class="DataSaver">
+	<property name="dataWriter" ref="file'/>
+</bean>
+
+// 자동 의존성 주입
+클래스 안에 @Autowired 어노테이션을 붙 여준다  
+-> 멤버변수, setter메소드, 생성자 모두 붙여도 된다
+
+스프링의 빈으로 등록될 모든 클래스에 @Component(@Repository @Controller등..)를 붙여주고
+Dao(의 타입)에 @Autowired를 붙여주면 의존성 주입이 완료된다
+
+ex)
+@Service
+public class OrderService{
+	@Autowired
+	OrderDao orderDao;
+	@Autowired
+	ProductDao productDao;
+	@Autowired
+	CustomerDao customerDao;
+
+	public void order(Order order){
+	
+	}
+}
+
+@Repository
+public class OrderDao{
+}
+
+@Repository
+public class ProductDao{
+}
+
+@Repository
+public class CustomerDao{
+}
+
+context.xml
+<context:component-scan base-package="com.sample.dao" />
+<context:component-scan base-package="com.sample.service" />

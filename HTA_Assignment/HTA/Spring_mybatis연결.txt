@@ -4,14 +4,17 @@
 2. mapper 인터페이스를 만들어야 한다(dao의 mapper버전)
 	- crud관련 메소드
 3. mapper파일을 만들어야 한다(SQL문이 정의되어있는 파일, mapper 인터페이스 하나 - mapper 파일 하나) => 개발자들의 주요 업무
-4. spring bean configuration 파일(context)에 와서 connection pool 객체를 가져온다
+4. spring bean configuration 파일(context)에 와서 connection pool 객체를 가져온다 )
+	- connection pool을 제공하는 라이브러리는 여러개가 있음
+
 5. spring과 mybatis를 연결한다 => mybatis의 핵심객체를 스프링의 빈으로 등록한다.
-	- sqlSessionFactory를 스프링의 빈으로 등록 (-> sqlSessionFactory는 객체 생성에 여러단계가 필요하여 sqlSessionFactoryBean클래스(mybatis-spring.jar제공)의 getObject()메소드를
-	  를 통해 sqlSessionFactory를 얻음
+	- sqlSessionFactory를 스프링의 빈으로 등록 (-> sqlSessionFactory는 객체 생성에 여러단계가 필요하여 
+	  sqlSessionFactoryBean클래스(mybatis-spring.jar제공)의 getObject()메소드를 통해 sqlSessionFactory를 얻음
 	   * spring과 mybatis의 연결에서는 mybatis 환경설정파일에는 db연결 정보가 없다 (because. connection pool객체를 통해 db와 연결하기 때문)
 	   * sqlSession객체를 등록할 때 p:dataSource-ref ="dataSource"를 주입하여 db와 연결한다.
 	   * p:configLocation => 값(String 등)을 주입할 떄, p:configLocation-ref => 객체를 주입할 떄
-===> sqlSessionFactoryBean이 등록되면, sqlSession 제공, mybatis 환경설정정보 등을 갖고 있음, 
+
+===> sqlSessionFactoryBean이 등록되면, sqlSession 제공, mybatis 환경설정정보 등을 갖고 있음 (따라서 mybatis-config.xml이 필요 없어짐) 
 
 ====2====
 1. 인터페이스만 생성하면 구현객체는 MapperScannerConfigurer가 대신 구현해준다. (mybatis의 반복적 코드를 생략하게 해준다.)

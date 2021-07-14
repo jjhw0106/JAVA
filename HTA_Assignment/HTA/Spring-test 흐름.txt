@@ -1,0 +1,33 @@
+@RunWith(SpringJUnit4ClassRunner.class)
+@ContextConfiguration(locations = "classpath:/spring/context-mybatis.xml")
+public class TestUserService {
+	@Autowired
+	UserService UserService;
+	
+	@Autowired
+	UserHistoryService userHistoryService;
+
+	@Value("${default.deposit.point}")
+	int defaultDepositPoint;
+	
+	* Before - test - After - Before - test - After 순서로 실행되나 test 간에는 순서가 랜덤이다.
+	@Before
+	public void setup(){
+		// 각각의 테스트메소드 수행 전 실행할 작업
+	}
+
+	@After
+	public void setup(){
+		// 각각의 테스트메소드 수행 전 실행할 작업
+	}
+
+	@Test
+	public void setup(){
+		// 각각의 테스트메소드 수행 전 실행할 작업
+	}
+
+	@Test
+	public void setup(){
+		// 각각의 테스트메소드 수행 전 실행할 작업
+	}
+}

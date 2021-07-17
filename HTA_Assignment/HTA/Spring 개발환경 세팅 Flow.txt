@@ -1,0 +1,10 @@
+스프링 Advice 만들기
+1. advice 클래스 만든 후 @Aspect 달기
+2. 공통기능으로 만들고 싶은 메소드 정의 
+    5가지 실행시점
+	- @Before
+	- @After
+	- @After Returning
+	- @After Throwing
+	- @Around
+3. Pointcut으로 advice가 적용될 대상 지정
